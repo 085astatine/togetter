@@ -6,6 +6,7 @@ import time
 import requests
 import lxml.etree
 from .tweet_data import TweetData
+from .togetter_data import TogetterData
 from .togetter_page_base import _TogetterPage, parseTweetData
 from .xml_tools import saveXML
 
@@ -76,6 +77,9 @@ class TogetterPage(_TogetterPage):
             tweet_data.set('index', str(i))
             tweet_list.append(tweet_data)
         return etree
+    
+    def toTogetterData(self):
+        return TogetterData(self.toElementTree())
     
     def saveAsXML(self, xml_path, pretty_print= True):
         saveXML(self.toElementTree(), xml_path, pretty_print)
