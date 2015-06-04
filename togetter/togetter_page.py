@@ -100,3 +100,8 @@ def getMoreTweets(self):
         with open(filename, mode='wb') as file:
             file.write(response.content)
     return tweet_data
+
+def toXML(id, xml_path, logger= None):
+    page = TogetterPage(id, logger= logger)
+    page.loadTweets()
+    page.saveAsXML(xml_path)
