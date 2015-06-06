@@ -63,10 +63,6 @@ class _TogetterPage(WebPage):
         return len(self.html.xpath(xpath)) == 1
     
     def nextPage(self):
-        # logger設定
-        logger = (self._logger.getChild('Child')
-                  if self.__class__.__name__ != '_TogetterPage'
-                  else self._logger)
         # 次のページが存在するか確認する
         xpath = r'head/link[@rel="next"]'
         is_exists = (len(self.html.xpath(xpath)) == 1)
@@ -74,15 +70,11 @@ class _TogetterPage(WebPage):
             return _TogetterPage(self.id,
                                  page= self._page + 1,
                                  session= self._session,
-                                 logger= logger)
+                                 logger= self._logger)
         else:
             return None
     
     def prevPage(self):
-        # logger設定
-        logger = (self._logger.getChild('Child')
-                  if self.__class__.__name__ != '_TogetterPage'
-                  else self._logger)
         # 前のページが存在するか否か確認する
         xpath = r'head/link[@rel="prev"]'
         is_exists = (len(self.html.xpath(xpath)) == 1)
@@ -90,7 +82,7 @@ class _TogetterPage(WebPage):
             return _TogetterPage(self.id,
                                  page= self._page - 1,
                                  session= self._session,
-                                 logger= logger)
+                                 logger= self._logger)
         else:
             return None
 
