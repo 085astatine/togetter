@@ -55,6 +55,15 @@ class _TogetterPage(WebPage):
     def csrf_secret(self):
         return self._session.cookies.get('csrf_secret', None)
     
+    @property
+    def creator(self):
+        xpath = r'head/meta[@name="twitter:creator"]'
+        data = self.html.xpath(xpath)
+        if len(data) == 1:
+            return data[0].get('content')
+        else:
+            return None
+    
     def getTweetList(self):
         return getTweetData(self.html)
     
