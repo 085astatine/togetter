@@ -15,7 +15,7 @@ class _TogetterPage(WebPage):
             logger = logging.getLogger(__name__)
         # 値設定
         self._id = id
-        self._page = page
+        self._page_number = page
         # 接続設定
         self._session = session
         url = r'http://togetter.com/li/{0}'.format(id)
@@ -74,10 +74,10 @@ class _TogetterPage(WebPage):
     def nextPage(self):
         # 次のページが存在するか確認する
         xpath = r'head/link[@rel="next"]'
-        is_exists = (len(self.html.xpath(xpath)) == 1)
-        if is_exists:
+        exists = (len(self.html.xpath(xpath)) == 1)
+        if exists:
             return _TogetterPage(self.id,
-                                 page= self._page + 1,
+                                 page= self._page_number + 1,
                                  session= self._session,
                                  logger= self._logger)
         else:
@@ -86,10 +86,10 @@ class _TogetterPage(WebPage):
     def prevPage(self):
         # 前のページが存在するか否か確認する
         xpath = r'head/link[@rel="prev"]'
-        is_exists = (len(self.html.xpath(xpath)) == 1)
-        if is_exists:
+        exists = (len(self.html.xpath(xpath)) == 1)
+        if exists:
             return _TogetterPage(self.id,
-                                 page= self._page - 1,
+                                 page= self._page_number - 1,
                                  session= self._session,
                                  logger= self._logger)
         else:
