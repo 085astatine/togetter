@@ -27,7 +27,7 @@ class _TweetData(object):
         if len(result) == 1:
             return result[0].text
         else:
-            return None
+            return ''
     
     @property
     def user_id(self):
