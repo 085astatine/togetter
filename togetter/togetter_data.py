@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import copy
 import datetime
 import pathlib
 import lxml.etree
@@ -64,6 +65,9 @@ class TogetterData(object):
     @property
     def tweet_list(self):
         return self._tweet_list
+    
+    def copy(self):
+        return TogetterData(copy.deepcopy(self.etree))
     
     def saveAsXML(self, xml_path, pretty_print= True):
         saveXML(self.etree, xml_path, pretty_print)
