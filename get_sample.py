@@ -13,8 +13,16 @@ if __name__=='__main__':
     handler.formatter = logging.Formatter(
                  fmt='%(name)s::%(levelname)s: %(message)s')
     logger.addHandler(handler)
+    # input togetter id
+    while True:
+        input_id = input("input TogetterPage ID >")
+        try:
+            togetter_id = int(input_id)
+            break
+        except ValueError as error:
+            print("your input<{0}> is invalid".format(repr(input_id)))
+            print(str(error))
     # get tweet from togetter
-    togetter_id = XXXXXXX
     page = togetter.TogetterPage(togetter_id, logger= logger)
     page.loadTweets()
     # save as XML
