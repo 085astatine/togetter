@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import datetime
+from collections import OrderedDict
 import lxml.etree
 
 class _TweetData(object):
@@ -76,10 +77,12 @@ class _TweetData(object):
     def toElement(self):
         root = lxml.etree.Element('tweet_data')
         # user
-        user = lxml.etree.SubElement(root, 'user')
-        user.set('name', self.user_name)
-        user.set('id', self.user_id)
-        user.set('link', self.user_link)
+        user_attribute = OrderedDict([
+                    ('id', self.user_id),
+                    ('name', self.user_name),
+                    ('link', self.user_link),
+                    ])
+        user = lxml.etree.SubElement(root, 'user', attrib= user_attribute)
         # link
         link = lxml.etree.SubElement(root, 'link')
         link.text = self.tweet_link
