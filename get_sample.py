@@ -24,7 +24,6 @@ if __name__=='__main__':
             print(str(error))
     # get tweet from togetter
     page = togetter.TogetterPage(togetter_id, logger= logger)
-    page.loadTweets()
     # save as XML
     xml_file = 'togetter_{0}.xml'.format(togetter_id)
     page.saveAsXML(xml_file)

@@ -43,6 +43,8 @@ class TogetterPage(_TogetterPage):
     
     def getTweetList(self):
         if self._tweet_list is None:
+            if not self._is_loaded:
+                self.loadTweets()
             tweet_list = []
             tweet_list.extend(_TogetterPage.getTweetList(self))
             if not self._more_tweets_data is None:
@@ -103,5 +105,4 @@ def getMoreTweets(self):
 
 def toXML(id, xml_path, logger= None):
     page = TogetterPage(id, logger= logger)
-    page.loadTweets()
     page.saveAsXML(xml_path)
