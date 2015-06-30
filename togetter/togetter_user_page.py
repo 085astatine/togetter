@@ -45,8 +45,7 @@ class TogetterUserPage(WebPage):
     
     def nextPage(self):
         xpath = r'head/link[@rel="next"]'
-        exists = (len(self.html.xpath(xpath)) == 1)
-        if exists:
+        if (len(self.html.xpath(xpath)) == 1):
             return TogetterUserPage(self.user_id,
                                     page= self.page_number + 1,
                                     session= self._session,
@@ -56,8 +55,7 @@ class TogetterUserPage(WebPage):
     
     def prevPage(self):
         xpath = r'head/link[@rel="prev"]'
-        exists = (len(self.html.xpath(xpath)) == 1)
-        if exists:
+        if (len(self.html.xpath(xpath)) == 1):
             return TogetterUserPage(self.user_id,
                                     page= self.page_number - 1,
                                     session= self._session,

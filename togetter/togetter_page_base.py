@@ -74,8 +74,7 @@ class _TogetterPage(WebPage):
     def nextPage(self):
         # 次のページが存在するか確認する
         xpath = r'head/link[@rel="next"]'
-        exists = (len(self.html.xpath(xpath)) == 1)
-        if exists:
+        if (len(self.html.xpath(xpath)) == 1):
             return _TogetterPage(self.id,
                                  page= self._page_number + 1,
                                  session= self._session,
@@ -86,8 +85,7 @@ class _TogetterPage(WebPage):
     def prevPage(self):
         # 前のページが存在するか否か確認する
         xpath = r'head/link[@rel="prev"]'
-        exists = (len(self.html.xpath(xpath)) == 1)
-        if exists:
+        if (len(self.html.xpath(xpath)) == 1):
             return _TogetterPage(self.id,
                                  page= self._page_number - 1,
                                  session= self._session,
