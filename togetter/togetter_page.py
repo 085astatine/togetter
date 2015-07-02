@@ -97,10 +97,6 @@ def getMoreTweets(self):
     self._logger.info('  URL: {0}'.format(response.url))
     self._logger.debug('  csrfToken : {0}'.format(self.csrf_token))
     self._logger.debug('  csrfSecret: {0}'.format(self.csrf_secret))
-    if self._logger.getEffectiveLevel() == logging.DEBUG:
-        filename = 'moreTweets{0}.txt'.format(self.id)
-        with open(filename, mode='wb') as file:
-            file.write(response.content)
     return tweet_data
 
 def toXML(id, xml_path, logger= None):

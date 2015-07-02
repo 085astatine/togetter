@@ -8,7 +8,7 @@ if __name__=='__main__':
     print('TogetterSample')
     # logger setting
     logger = logging.getLogger('TogetterSample')
-    logger.setLevel(logging.INFO)
+    logger.setLevel(logging.DEBUG)
     handler = logging.StreamHandler()
     handler.formatter = logging.Formatter(
                  fmt='%(name)s::%(levelname)s: %(message)s')
