@@ -111,10 +111,10 @@ class TogetterPageInfo(object):
         else:
             return None
 
-def getAllPagefromUser(user_id, session= None, logger= None):
+def getAllPagefromUser(user_id, session= None, logger= None, wait_time= 0.2):
     user_page = TogetterUserPage(user_id, session= session, logger= logger)
     while not user_page is None:
         for page_data in user_page.getPageList():
             yield page_data
         user_page = user_page.nextPage()
-        time.sleep(0.2)
+        time.sleep(wait_time)
