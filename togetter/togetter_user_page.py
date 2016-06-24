@@ -39,11 +39,11 @@ class TogetterUserPage(WebPage):
     def page_number(self):
         return self._page_number
     
-    def getPageList(self):
+    def get_page_list(self):
         xpath = r'//ul[@class="simple_list"]/li[@class]'
         return [TogetterPageInfo(data) for data in self.html.xpath(xpath)]
     
-    def nextPage(self):
+    def next_page(self):
         xpath = r'head/link[@rel="next"]'
         if (len(self.html.xpath(xpath)) == 1):
             return TogetterUserPage(self.user_id,
@@ -53,7 +53,7 @@ class TogetterUserPage(WebPage):
         else:
             return None
     
-    def prevPage(self):
+    def prev_page(self):
         xpath = r'head/link[@rel="prev"]'
         if (len(self.html.xpath(xpath)) == 1):
             return TogetterUserPage(self.user_id,
@@ -111,10 +111,14 @@ class TogetterPageInfo(object):
         else:
             return None
 
-def getAllPagefromUser(user_id, session= None, logger= None, wait_time= 0.2):
+def get_all_page_from_user(
+            user_id,
+            session= None,
+            logger= None,
+            wait_time= 0.2):
     user_page = TogetterUserPage(user_id, session= session, logger= logger)
     while not user_page is None:
-        for page_data in user_page.getPageList():
+        for page_data in user_page.get_page_list():
             yield page_data
-        user_page = user_page.nextPage()
+        user_page = user_page.next_page()
         time.sleep(wait_time)

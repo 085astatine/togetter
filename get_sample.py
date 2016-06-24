@@ -26,9 +26,9 @@ if __name__=='__main__':
     page = togetter.TogetterPage(togetter_id, logger= logger)
     # save as XML
     xml_file = 'togetter_{0}.xml'.format(togetter_id)
-    page.saveAsXML(xml_file)
+    page.save_as_xml(xml_file)
     # load from XML
-    togetter_data = togetter.fromXML(xml_file)
+    togetter_data = togetter.from_xml(xml_file)
     print(togetter_data.title)
     print(togetter_data.url)
     for tweet in togetter_data.tweet_list:

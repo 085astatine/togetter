@@ -9,6 +9,6 @@ __all__ = [
     'getAllPagefromUser',
     ]
 
-from .togetter_data import TogetterData, fromXML
-from .togetter_page import TogetterPage, toXML
-from .togetter_user_page import TogetterUserPage, getAllPagefromUser
+from .togetter_data import TogetterData, from_xml
+from .togetter_page import TogetterPage, to_xml
+from .togetter_user_page import TogetterUserPage, get_all_page_from_user

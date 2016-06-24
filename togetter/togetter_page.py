@@ -7,8 +7,8 @@ import requests
 import lxml.etree
 from .tweet_data import TweetData
 from .togetter_data import TogetterData
-from .togetter_page_base import _TogetterPage, parseTweetData
-from .xml_tools import saveXML
+from .togetter_page_base import _TogetterPage, parse_tweet_data
+from .xml_tools import save_as_xml
 
 class TogetterPage(_TogetterPage):
     def __init__(self, id, page= 1, session= None, logger= None):
@@ -30,31 +30,31 @@ class TogetterPage(_TogetterPage):
         # データ読み込み済みか否か
         self._is_loaded = False
     
-    def loadTweets(self):
+    def load_tweets(self):
         if not self._is_loaded:
-            if self.existsMoreTweets() and (self._more_tweets_data is None):
-                self._more_tweets_data = getMoreTweets(self)
-            next_page = self.nextPage()
+            if self.exists_more_tweets() and (self._more_tweets_data is None):
+                self._more_tweets_data = get_more_tweets(self)
+            next_page = self.next_page()
             while not next_page is None:
                 self._page_list.append(next_page)
                 time.sleep(0.2)
-                next_page = self._page_list[-1].nextPage()
+                next_page = self._page_list[-1].next_page()
             self._is_loaded = True
     
-    def getTweetList(self):
+    def get_tweet_list(self):
         if self._tweet_list is None:
             if not self._is_loaded:
-                self.loadTweets()
+                self.load_tweets()
             tweet_list = []
-            tweet_list.extend(_TogetterPage.getTweetList(self))
+            tweet_list.extend(_TogetterPage.get_tweet_list(self))
             if not self._more_tweets_data is None:
-                tweet_list.extend(parseTweetData(self._more_tweets_data))
+                tweet_list.extend(parse_tweet_data(self._more_tweets_data))
             for page in self._page_list:
-                tweet_list.extend(page.getTweetList())
+                tweet_list.extend(page.get_tweet_list())
             self._tweet_list = tweet_list
         return self._tweet_list
     
-    def toElementTree(self):
+    def to_element_tree(self):
         # root
         root = lxml.etree.Element('togetter')
         etree = lxml.etree.ElementTree(root)
@@ -74,19 +74,19 @@ class TogetterPage(_TogetterPage):
         access_time.set('timestamp', str(now_time.timestamp()))
         # tweet data
         tweet_list = lxml.etree.SubElement(root, 'tweet_list')
-        for i, tweet in enumerate(self.getTweetList()):
-            tweet_data = tweet.toElement()
+        for i, tweet in enumerate(self.get_tweet_list()):
+            tweet_data = tweet.to_element()
             tweet_data.set('index', str(i))
             tweet_list.append(tweet_data)
         return etree
     
-    def toTogetterData(self):
-        return TogetterData(self.toElementTree())
+    def to_togetter_data(self):
+        return TogetterData(self.to_element_tree())
     
-    def saveAsXML(self, xml_path, pretty_print= True):
-        saveXML(self.toElementTree(), xml_path, pretty_print)
+    def save_as_xml(self, xml_path, pretty_print= True):
+        save_as_xml(self.to_element_tree(), xml_path, pretty_print)
 
-def getMoreTweets(self):
+def get_more_tweets(self):
     url = r'http://togetter.com/api/moreTweets/{0}'.format(self._id)
     data = {'page': 1,
             'csrf_token': self.csrf_token}
@@ -99,6 +99,6 @@ def getMoreTweets(self):
     self._logger.debug('  csrfSecret: {0}'.format(self.csrf_secret))
     return tweet_data
 
-def toXML(id, xml_path, logger= None):
+def to_xml(id, xml_path, logger= None):
     page = TogetterPage(id, logger= logger)
-    page.saveAsXML(xml_path)
+    page.save_as_xml(xml_path)

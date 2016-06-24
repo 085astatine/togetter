@@ -74,7 +74,7 @@ class _TweetData(object):
         else:
             return None
     
-    def toElement(self):
+    def to_element(self):
         root = lxml.etree.Element('tweet_data')
         # user
         user_attribute = OrderedDict([

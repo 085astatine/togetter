@@ -5,7 +5,7 @@ import datetime
 import pathlib
 import lxml.etree
 from .tweet_data import TweetData
-from .xml_tools import saveXML
+from .xml_tools import save_as_xml
 
 class TogetterData(object):
     def __init__(self, element_tree):
@@ -69,10 +69,10 @@ class TogetterData(object):
     def copy(self):
         return TogetterData(copy.deepcopy(self.etree))
     
-    def saveAsXML(self, xml_path, pretty_print= True):
-        saveXML(self.etree, xml_path, pretty_print)
+    def save_as_xml(self, xml_path, pretty_print= True):
+        save_as_xml(self.etree, xml_path, pretty_print)
 
-def fromXML(xml_path):
+def from_xml(xml_path):
     if not isinstance(xml_path, pathlib.Path):
         xml_path = pathlib.Path(xml_path)
     xml_parser = lxml.etree.XMLParser(remove_blank_text=True)

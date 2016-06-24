@@ -64,14 +64,14 @@ class _TogetterPage(WebPage):
         else:
             return None
     
-    def getTweetList(self):
-        return getTweetData(self.html)
+    def get_tweet_list(self):
+        return get_tweet_data(self.html)
     
-    def existsMoreTweets(self):
+    def exists_more_tweets(self):
         xpath = r'body//div[@class="more_tweet_box"]'
         return len(self.html.xpath(xpath)) == 1
     
-    def nextPage(self):
+    def next_page(self):
         # 次のページが存在するか確認する
         xpath = r'head/link[@rel="next"]'
         if (len(self.html.xpath(xpath)) == 1):
@@ -82,7 +82,7 @@ class _TogetterPage(WebPage):
         else:
             return None
     
-    def prevPage(self):
+    def prev_page(self):
         # 前のページが存在するか否か確認する
         xpath = r'head/link[@rel="prev"]'
         if (len(self.html.xpath(xpath)) == 1):
@@ -93,15 +93,15 @@ class _TogetterPage(WebPage):
         else:
             return None
 
-def getTweetData(html_data):
+def get_tweet_data(html_data):
     xpath = r'//body//ul[./li[@class="list_item"]]'
     tweet_data = html_data.xpath(xpath)
     if len(tweet_data) == 1:
-        return parseTweetData(tweet_data[0])
+        return parse_tweet_data(tweet_data[0])
     else:
         return []
 
-def parseTweetData(tweet_data):
+def parse_tweet_data(tweet_data):
     xpath = r'//li[@class="list_item"]/div[@class="list_box type_tweet"]'
     data_list = tweet_data.xpath(xpath)
     return [_TweetData(data) for data in data_list]
