@@ -1,12 +1,25 @@
 # -*- coding: utf-8 -*-
 
 import pathlib
+from typing import Union
 import lxml.etree
 
-def save_as_xml(element_tree, xml_path, pretty_print= True):
-    if not isinstance(xml_path, pathlib.Path):
-        xml_path = pathlib.Path(xml_path)
-    with xml_path.open(mode= 'w', encoding= 'utf-8', newline= '') as file:
+def save_as_xml(
+            element_tree: lxml.etree._ElementTree,
+            filepath: Union[str, pathlib.Path],
+            pretty_print: bool = True) -> None:
+    """save ElementTree in the file as XML
+
+    Args:
+    element_tree (lxml.etree._ElementTree): the ElementTree to be save.
+    filepath (str, pathlib.Path): The path of the File to be output as XML.
+    pretty_print (bool) optional:
+        The Argument of lxml.etree.tostring.
+        Defaults to True.
+    """
+    if not isinstance(filepath, pathlib.Path):
+        filepath = pathlib.Path(filepath)
+    with filepath.open(mode= 'w', encoding= 'utf-8', newline= '') as file:
         file.write(lxml.etree.tostring(
                     element_tree,
                     encoding= 'utf-8',
