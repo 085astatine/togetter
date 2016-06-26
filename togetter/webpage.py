@@ -26,16 +26,16 @@ class WebPage:
         logger (logging.Logger, optional):
             Logger
             Defauults to None, then new Logger will be Created"""
-        # logger設定
-        if logger is None:
-            logger = logging.getLogger(__name__)
-        self._logger = logger
-        # 値設定
-        if session is None:
-            session = requests.session()
-        self._response = session.get(url, params= params)
+        self._logger = (logger
+                    if logger is not None else logging.getLoger(__name__))
+        self._session = session if session is not None else requests.Session()
+        self._response = self._session.get(url, params= params)
         self._html = lxml.html.fromstring(self.response.content)
     
+    @property
+    def session(self) -> requests.sessions.Session:
+        return self._session
+
     @property
     def url(self) -> str:
         return self._response.url

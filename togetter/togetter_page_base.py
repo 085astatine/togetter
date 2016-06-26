@@ -9,7 +9,7 @@ from .tweet_data import TweetDataParser
 from .webpage import WebPage
 
 class _TogetterPage(WebPage):
-    def __init__(self, id, page, session, logger= None):
+    def __init__(self, id, page, session= None, logger= None):
         # logger設定
         if logger is None:
             logger = logging.getLogger(__name__)
@@ -17,13 +17,12 @@ class _TogetterPage(WebPage):
         self._id = id
         self._page_number = page
         # 接続設定
-        self._session = session
         url = r'http://togetter.com/li/{0}'.format(id)
         params = {'page': page} if page != 1 else {}
         WebPage.__init__(self, url,
                          logger= logger,
                          params= params,
-                         session= self._session)
+                         session= session)
         # logger出力
         self._logger.info('{0}'.format(self.__class__.__name__))
         self._logger.info('  title: {0}'.format(self.title))
@@ -53,7 +52,7 @@ class _TogetterPage(WebPage):
     
     @property
     def csrf_secret(self):
-        return self._session.cookies.get('csrf_secret', None)
+        return self.session.cookies.get('csrf_secret', None)
     
     @property
     def creator(self):
@@ -77,7 +76,7 @@ class _TogetterPage(WebPage):
         if (len(self.html.xpath(xpath)) == 1):
             return _TogetterPage(self.id,
                                  page= self._page_number + 1,
-                                 session= self._session,
+                                 session= self.session,
                                  logger= self._logger)
         else:
             return None
@@ -88,7 +87,7 @@ class _TogetterPage(WebPage):
         if (len(self.html.xpath(xpath)) == 1):
             return _TogetterPage(self.id,
                                  page= self._page_number - 1,
-                                 session= self._session,
+                                 session= self.session,
                                  logger= self._logger)
         else:
             return None

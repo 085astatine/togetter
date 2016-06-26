@@ -15,8 +15,6 @@ class TogetterPage(_TogetterPage):
         # logger設定
         if logger is None:
             logger = logging.getLogger(__name__)
-        if session is None:
-            session = requests.session()
         _TogetterPage.__init__(self, id,
                                page= 1,
                                session= session,
