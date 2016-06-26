@@ -88,20 +88,21 @@ class TogetterData(object):
             Defaults to True.
         """
         _save_as_xml(self.etree, filepath, pretty_print)
+    
+    @classmethod
+    def load_xml(cls, filepath: Union[str, pathlib.Path]) -> "TogetterData":
+        """load TogetterData from XML file
 
-def load_xml(filepath: Union[str, pathlib.Path]) -> TogetterData:
-    """load TogetterData from XML file
+        Args:
+        filepath (str, pathlib.Path):
+            The path of the XML file that represents TogetterData
 
-    Args:
-    filepath (str, pathlib.Path):
-        The path of the XML file that represents TogetterData
-
-    Returns:
-        TogetterData: that has been generated from the XML file"""
-    if not isinstance(filepath, pathlib.Path):
-        filepath = pathlib.Path(filepath)
-    xml_parser = lxml.etree.XMLParser(remove_blank_text=True)
-    etree = lxml.etree.XML(
-                filepath.open(encoding= 'utf-8').detach().read(),
-                parser= xml_parser)
-    return TogetterData(etree)
+        Returns:
+            TogetterData: that has been generated from the XML file"""
+        if not isinstance(filepath, pathlib.Path):
+            filepath = pathlib.Path(filepath)
+        xml_parser = lxml.etree.XMLParser(remove_blank_text=True)
+        etree = lxml.etree.XML(
+                    filepath.open(encoding= 'utf-8').detach().read(),
+                    parser= xml_parser)
+        return TogetterData(etree)
