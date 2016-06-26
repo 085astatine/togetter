@@ -101,12 +101,11 @@ class TogetterPageInfo(object):
         else:
             return None
     
-    def open(self, page= 1, session= None, logger= None):
+    def open(self, session= None, logger= None):
         page_id = self.id
         if not page_id is None:
             return TogetterPageParser(
                         page_id,
-                        page= page,
                         session= session,
                         logger= logger)
         else:

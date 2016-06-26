@@ -10,42 +10,40 @@ from .togetter_data import TogetterData
 from .togetter_page_base import TogetterPage
 from .xml_tools import save_as_xml
 
-class TogetterPageParser(TogetterPage):
-    def __init__(self, id, page= 1, session= None, logger= None):
+class TogetterPageParser(object):
+    def __init__(self, page_id, session= None, logger= None):
         # logger設定
         if logger is None:
             logger = logging.getLogger(__name__)
-        TogetterPage.__init__(
-                    self,
-                    id,
+        # get Initial Page
+        self._initial_page = TogetterPage(
+                    page_id,
                     page= 1,
                     session= session,
                     logger= logger)
-        # TweetsList
+        # Page List
+        self._page_list = None
+        # Tweet List
         self._tweet_list = None
-        # 全pageのList
-        self._page_list = []
-        # データ読み込み済みか否か
-        self._is_loaded = False
     
-    def load_tweets(self):
-        if not self._is_loaded:
-            next_page = self.next_page()
-            while not next_page is None:
-                self._page_list.append(next_page)
-                time.sleep(0.2)
+    def load_page(self, wait_time= 1.0):
+        if self._page_list is None:
+            self._page_list = []
+            self._page_list.append(self._initial_page)
+            while True:
                 next_page = self._page_list[-1].next_page()
-            self._is_loaded = True
+                if next_page is None:
+                    break
+                self._page_list.append(next_page)
+                time.sleep(wait_time)
     
     def get_tweet_list(self):
         if self._tweet_list is None:
-            if not self._is_loaded:
-                self.load_tweets()
-            tweet_list = []
-            tweet_list.extend(TogetterPage.get_tweet_list(self))
+            if self._page_list is None:
+                self.load_page()
+            self._tweet_list = []
             for page in self._page_list:
-                tweet_list.extend(page.get_tweet_list())
-            self._tweet_list = tweet_list
+                self._tweet_list.extend(page.get_tweet_list())
         return self._tweet_list
     
     def to_element_tree(self):
@@ -54,13 +52,13 @@ class TogetterPageParser(TogetterPage):
         etree = lxml.etree.ElementTree(root)
         # title
         title = lxml.etree.SubElement(root, 'title')
-        title.text = self.title
+        title.text = self._initial_page.title
         # id
         page_id = lxml.etree.SubElement(root, 'id')
-        page_id.text = str(self.id)
+        page_id.text = str(self._initial_page.id)
         # URL
         url = lxml.etree.SubElement(root, 'URL')
-        url.text = self.url
+        url.text = self._initial_page.url
         # AccessTime
         now_time = datetime.datetime.today()
         access_time = lxml.etree.SubElement(root, 'access_time')
