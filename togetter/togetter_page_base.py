@@ -16,6 +16,7 @@ class _TogetterPage(WebPage):
         # 値設定
         self._id = id
         self._page_number = page
+        self._tweet_list = None
         # 接続設定
         url = r'http://togetter.com/li/{0}'.format(id)
         params = {'page': page} if page != 1 else {}
@@ -64,9 +65,21 @@ class _TogetterPage(WebPage):
             return None
     
     def get_tweet_list(self):
-        return get_tweet_data(self.html)
+        if self._tweet_list is None:
+            self._tweet_list = []
+            # Tweet
+            xpath = r'//body//ul[./li[@class="list_item"]]'
+            tweet_data = self.html.xpath(xpath)
+            if len(tweet_data) == 1:
+                self._tweet_list.extend(
+                            _parse_tweet_data(tweet_data[0]))
+            # More Tweets
+            if self.more_tweets_exists():
+                self._tweet_list.extend(
+                            _parse_tweet_data(_get_more_tweets(self)))
+        return self._tweet_list
     
-    def exists_more_tweets(self):
+    def more_tweets_exists(self):
         xpath = r'body//div[@class="more_tweet_box"]'
         return len(self.html.xpath(xpath)) == 1
     
@@ -92,15 +105,20 @@ class _TogetterPage(WebPage):
         else:
             return None
 
-def get_tweet_data(html_data):
-    xpath = r'//body//ul[./li[@class="list_item"]]'
-    tweet_data = html_data.xpath(xpath)
-    if len(tweet_data) == 1:
-        return parse_tweet_data(tweet_data[0])
-    else:
-        return []
+def _get_more_tweets(self):
+    url = r'http://togetter.com/api/moreTweets/{0}'.format(self._id)
+    data = {'page': 1,
+            'csrf_token': self.csrf_token}
+    response = self._session.post(url, data= data)
+    tweet_data = lxml.html.fromstring(response.content.decode('utf-8'))
+    # logger出力
+    self._logger.info('getMoreTweets')
+    self._logger.info('  URL: {0}'.format(response.url))
+    self._logger.debug('  csrfToken : {0}'.format(self.csrf_token))
+    self._logger.debug('  csrfSecret: {0}'.format(self.csrf_secret))
+    return tweet_data
 
-def parse_tweet_data(tweet_data):
+def _parse_tweet_data(tweet_etree):
     xpath = r'//li[@class="list_item"]/div[@class="list_box type_tweet"]'
-    data_list = tweet_data.xpath(xpath)
-    return [TweetDataParser(data) for data in data_list]
+    data_list = tweet_etree.xpath(xpath)
+    return [TweetDataParser(data).parse() for data in data_list]
