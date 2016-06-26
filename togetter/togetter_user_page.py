@@ -5,7 +5,7 @@ import re
 import time
 import requests
 from .webpage import WebPage
-from .togetter_page import TogetterPageParser
+from .togetter_page_parser import TogetterPageParser
 
 class TogetterUserPage(WebPage):
     def __init__(self, user_id, page= 1, session= None, logger= None):
