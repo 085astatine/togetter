@@ -26,7 +26,7 @@ if __name__=='__main__':
     page = togetter.TogetterPageParser(togetter_id, logger= logger)
     # save as XML
     xml_file = 'togetter_{0}.xml'.format(togetter_id)
-    page.save_as_xml(xml_file)
+    page.parse().save_as_xml(xml_file)
     # load from XML
     togetter_data = togetter.TogetterData.load_xml(xml_file)
     print(togetter_data.title)

@@ -5,10 +5,8 @@ import logging
 import time
 import requests
 import lxml.etree
-from .tweet_data import TweetData
 from .togetter_data import TogetterData
 from .togetter_page_base import TogetterPage
-from .xml_tools import save_as_xml
 
 class TogetterPageParser(object):
     def __init__(self, page_id, session= None, logger= None):
@@ -46,7 +44,7 @@ class TogetterPageParser(object):
                 self._tweet_list.extend(page.get_tweet_list())
         return self._tweet_list
     
-    def to_element_tree(self):
+    def parse(self):
         # root
         root = lxml.etree.Element('togetter')
         etree = lxml.etree.ElementTree(root)
@@ -70,14 +68,8 @@ class TogetterPageParser(object):
             tweet_data = tweet.to_element()
             tweet_data.set('index', str(i))
             tweet_list.append(tweet_data)
-        return etree
-    
-    def to_togetter_data(self):
-        return TogetterData(self.to_element_tree())
-    
-    def save_as_xml(self, xml_path, pretty_print= True):
-        save_as_xml(self.to_element_tree(), xml_path, pretty_print)
+        return TogetterData(etree)
 
 def to_xml(id, xml_path, logger= None):
     page = TogetterPage(id, logger= logger)
-    page.save_as_xml(xml_path)
+    page.parse().save_as_xml(xml_path)
