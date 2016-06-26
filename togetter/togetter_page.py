@@ -7,18 +7,20 @@ import requests
 import lxml.etree
 from .tweet_data import TweetData
 from .togetter_data import TogetterData
-from .togetter_page_base import _TogetterPage
+from .togetter_page_base import TogetterPage
 from .xml_tools import save_as_xml
 
-class TogetterPage(_TogetterPage):
+class TogetterPageParser(TogetterPage):
     def __init__(self, id, page= 1, session= None, logger= None):
         # logger設定
         if logger is None:
             logger = logging.getLogger(__name__)
-        _TogetterPage.__init__(self, id,
-                               page= 1,
-                               session= session,
-                               logger= logger)
+        TogetterPage.__init__(
+                    self,
+                    id,
+                    page= 1,
+                    session= session,
+                    logger= logger)
         # TweetsList
         self._tweet_list = None
         # 全pageのList
@@ -40,7 +42,7 @@ class TogetterPage(_TogetterPage):
             if not self._is_loaded:
                 self.load_tweets()
             tweet_list = []
-            tweet_list.extend(_TogetterPage.get_tweet_list(self))
+            tweet_list.extend(TogetterPage.get_tweet_list(self))
             for page in self._page_list:
                 tweet_list.extend(page.get_tweet_list())
             self._tweet_list = tweet_list

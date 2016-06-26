@@ -8,7 +8,7 @@ import lxml.etree
 from .tweet_data import TweetDataParser
 from .webpage import WebPage
 
-class _TogetterPage(WebPage):
+class TogetterPage(WebPage):
     def __init__(self, id, page, session= None, logger= None):
         # logger設定
         if logger is None:
@@ -87,10 +87,11 @@ class _TogetterPage(WebPage):
         # 次のページが存在するか確認する
         xpath = r'head/link[@rel="next"]'
         if (len(self.html.xpath(xpath)) == 1):
-            return _TogetterPage(self.id,
-                                 page= self._page_number + 1,
-                                 session= self.session,
-                                 logger= self._logger)
+            return TogetterPage(
+                        self.id,
+                        page= self._page_number + 1,
+                        session= self.session,
+                        logger= self._logger)
         else:
             return None
     
@@ -98,10 +99,11 @@ class _TogetterPage(WebPage):
         # 前のページが存在するか否か確認する
         xpath = r'head/link[@rel="prev"]'
         if (len(self.html.xpath(xpath)) == 1):
-            return _TogetterPage(self.id,
-                                 page= self._page_number - 1,
-                                 session= self.session,
-                                 logger= self._logger)
+            return TogetterPage(
+                        self.id,
+                        page= self._page_number - 1,
+                        session= self.session,
+                        logger= self._logger)
         else:
             return None
 

@@ -5,7 +5,7 @@ import re
 import time
 import requests
 from .webpage import WebPage
-from .togetter_page import TogetterPage
+from .togetter_page import TogetterPageParser
 
 class TogetterUserPage(WebPage):
     def __init__(self, user_id, page= 1, session= None, logger= None):
@@ -104,10 +104,11 @@ class TogetterPageInfo(object):
     def open(self, page= 1, session= None, logger= None):
         page_id = self.id
         if not page_id is None:
-            TogetterPage(page_id,
-                         page= page,
-                         session= session,
-                         logger= logger)
+            return TogetterPageParser(
+                        page_id,
+                        page= page,
+                        session= session,
+                        logger= logger)
         else:
             return None
 

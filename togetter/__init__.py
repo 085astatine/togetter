@@ -10,5 +10,5 @@ __all__ = [
     ]
 
 from .togetter_data import TogetterData
-from .togetter_page import TogetterPage, to_xml
+from .togetter_page import TogetterPageParser, to_xml
 from .togetter_user_page import TogetterUserPage, get_all_page_from_user

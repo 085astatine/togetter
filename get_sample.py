@@ -23,7 +23,7 @@ if __name__=='__main__':
             print("your input<{0}> is invalid".format(repr(input_id)))
             print(str(error))
     # get tweet from togetter
-    page = togetter.TogetterPage(togetter_id, logger= logger)
+    page = togetter.TogetterPageParser(togetter_id, logger= logger)
     # save as XML
     xml_file = 'togetter_{0}.xml'.format(togetter_id)
     page.save_as_xml(xml_file)
