@@ -2,91 +2,19 @@
 
 import datetime
 from collections import OrderedDict
+from typing import Optional, Union
 import lxml.etree
 
-class TweetDataParser(object):
-    def __init__(self, element):
-        self._element = element
-    
-    @property
-    def element(self):
-        return self._element
-    
-    @property
-    def tweet(self):
-        xpath = r'.//div[@class= "tweet emj"]'
-        result = self.element.xpath(xpath)
-        if len(result) == 1:
-            return ''.join(result[0].itertext())
-        else:
-            return None
-    
-    @property
-    def user_name(self):
-        xpath = r'.//a[@class= "user_link"]/strong'
-        result = self.element.xpath(xpath)
-        if len(result) == 1:
-            return result[0].text
-        else:
-            return ''
-    
-    @property
-    def user_id(self):
-        xpath = r'.//a[@class= "user_link"]/span[@class= "status_name"]'
-        result = self.element.xpath(xpath)
-        if len(result) == 1:
-            return result[0].text
-        else:
-            return None
-    
-    @property
-    def user_link(self):
-        xpath = r'.//a[@class= "user_link"]'
-        result = self.element.xpath(xpath)
-        if len(result) == 1:
-            return result[0].get('href')
-        else:
-            return None
-    
-    @property
-    def tweet_link(self):
-        xpath = r'.//a[@class= "timestamp"]'
-        result = self.element.xpath(xpath)
-        if len(result) == 1:
-            return result[0].get('href')
-        else:
-            return None
-    
-    @property
-    def timestamp(self):
-        xpath = r'.//a[@class= "timestamp"]'
-        result = self.element.xpath(xpath)
-        if len(result) == 1:
-            return int(result[0].get('data-timestamp'))
-        else:
-            return None
-    
-    @property
-    def datetime(self):
-        timestamp = self.timestamp
-        if not timestamp is None:
-            return datetime.datetime.fromtimestamp(timestamp)
-        else:
-            return None
-    
-    def to_element(self):
-        return _to_element(self)
-
 class TweetData(object):
-    def __init__(self, element):
+    def __init__(self, element: lxml.etree._Element) -> None:
         self._element = element
     
     @property
-    def element(self):
+    def element(self) -> lxml.etree._Element:
         return self._element
     
     @property
-    def tweet(self):
+    def tweet(self) -> Optional[str]:
         xpath = r'./tweet'
         data = self.element.xpath('./tweet')
         if len(data) == 1:
@@ -95,7 +23,7 @@ class TweetData(object):
             None
     
     @property
-    def user_name(self):
+    def user_name(self) -> Optional[str]:
         xpath = r'./user'
         result = self.element.xpath(xpath)
         if len(result) == 1:
@@ -104,7 +32,7 @@ class TweetData(object):
             return None
     
     @property
-    def user_id(self):
+    def user_id(self) -> Optional[str]:
         xpath = r'./user'
         result = self.element.xpath(xpath)
         if len(result) == 1:
@@ -113,7 +41,7 @@ class TweetData(object):
             return None
     
     @property
-    def user_link(self):
+    def user_link(self) -> Optional[str]:
         xpath = r'./user'
         result = self.element.xpath(xpath)
         if len(result) == 1:
@@ -122,7 +50,7 @@ class TweetData(object):
             return None
     
     @property
-    def tweet_link(self):
+    def tweet_link(self) -> Optional[str]:
         xpath = r'./link'
         result = self.element.xpath(xpath)
         if len(result) == 1:
@@ -131,7 +59,7 @@ class TweetData(object):
             return None
     
     @property
-    def timestamp(self):
+    def timestamp(self) -> Optional[int]:
         xpath = r'./datetime'
         result = self.element.xpath(xpath)
         if len(result) == 1:
@@ -140,17 +68,94 @@ class TweetData(object):
             return None
     
     @property
-    def datetime(self):
+    def datetime(self) -> Optional[datetime.datetime]:
         timestamp = self.timestamp
         if not timestamp is None:
             return datetime.datetime.fromtimestamp(timestamp)
         else:
             return None
     
-    def to_element(self):
+    def to_element(self) -> lxml.etree._Element:
         return _to_element(self)
 
-def _to_element(data):
+class TweetDataParser(object):
+    def __init__(self, element: lxml.etree._Element) -> None:
+        self._element = element
+    
+    @property
+    def element(self) -> lxml.etree._Element:
+        return self._element
+    
+    @property
+    def tweet(self) -> Optional[str]:
+        xpath = r'.//div[@class= "tweet emj"]'
+        result = self.element.xpath(xpath)
+        if len(result) == 1:
+            return ''.join(result[0].itertext())
+        else:
+            return None
+    
+    @property
+    def user_name(self) -> Optional[str]:
+        xpath = r'.//a[@class= "user_link"]/strong'
+        result = self.element.xpath(xpath)
+        if len(result) == 1:
+            return result[0].text
+        else:
+            return ''
+    
+    @property
+    def user_id(self) -> Optional[str]:
+        xpath = r'.//a[@class= "user_link"]/span[@class= "status_name"]'
+        result = self.element.xpath(xpath)
+        if len(result) == 1:
+            return result[0].text
+        else:
+            return None
+    
+    @property
+    def user_link(self) -> Optional[str]:
+        xpath = r'.//a[@class= "user_link"]'
+        result = self.element.xpath(xpath)
+        if len(result) == 1:
+            return result[0].get('href')
+        else:
+            return None
+    
+    @property
+    def tweet_link(self) -> Optional[str]:
+        xpath = r'.//a[@class= "timestamp"]'
+        result = self.element.xpath(xpath)
+        if len(result) == 1:
+            return result[0].get('href')
+        else:
+            return None
+    
+    @property
+    def timestamp(self) -> Optional[int]:
+        xpath = r'.//a[@class= "timestamp"]'
+        result = self.element.xpath(xpath)
+        if len(result) == 1:
+            return int(result[0].get('data-timestamp'))
+        else:
+            return None
+    
+    @property
+    def datetime(self) -> Optional[datetime.datetime]:
+        timestamp = self.timestamp
+        if not timestamp is None:
+            return datetime.datetime.fromtimestamp(timestamp)
+        else:
+            return None
+    
+    def to_element(self) -> lxml.etree._Element:
+        return _to_element(self)
+    
+    def parse(self) -> TweetData:
+        return TweetData(self.to_element())
+
+def _to_element(
+            data: Union[TweetDataParser, TweetData]) -> lxml.etree._Element:
     root = lxml.etree.Element('tweet_data')
     # user
     user_attribute = OrderedDict([
