@@ -7,6 +7,11 @@ import lxml.etree
 
 class TweetData(object):
     def __init__(self, element: lxml.etree._Element) -> None:
+        """Initialize
+
+        Args:
+        element (lxml.etree._Element):
+            Element representing the tweet"""
         self._element = element
     
     @property
@@ -76,9 +81,15 @@ class TweetData(object):
             return None
     
     def to_element(self) -> lxml.etree._Element:
+        """Create etree element"""
         return _to_element(self)
 
 class TweetDataParser(object):
+    """Initialize
+
+    Args:
+    element (lxml.etree._Element):
+        HTML element representing the tweet"""
     def __init__(self, element: lxml.etree._Element) -> None:
         self._element = element
     
@@ -149,9 +160,11 @@ class TweetDataParser(object):
             return None
     
     def to_element(self) -> lxml.etree._Element:
+        """Create etree element for TweetData class"""
         return _to_element(self)
     
     def parse(self) -> TweetData:
+        """Create TweetData class"""
         return TweetData(self.to_element())
 
 def _to_element(
