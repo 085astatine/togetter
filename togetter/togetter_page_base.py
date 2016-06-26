@@ -5,7 +5,7 @@ import logging
 import time
 import requests
 import lxml.etree
-from .tweet_data import _TweetData
+from .tweet_data import TweetDataParser
 from .webpage import WebPage
 
 class _TogetterPage(WebPage):
@@ -104,4 +104,4 @@ def get_tweet_data(html_data):
 def parse_tweet_data(tweet_data):
     xpath = r'//li[@class="list_item"]/div[@class="list_box type_tweet"]'
     data_list = tweet_data.xpath(xpath)
-    return [_TweetData(data) for data in data_list]
+    return [TweetDataParser(data) for data in data_list]
