@@ -9,7 +9,7 @@ from .tweet_data import TweetData
 from .xml_tools import save_as_xml as _save_as_xml
 
 class TogetterData(object):
-    def __init__(self, element_tree: lxml.etree._Element) -> None:
+    def __init__(self, element_tree: lxml.etree._ElementTree) -> None:
         """Initialize
 
         Args:
@@ -21,7 +21,7 @@ class TogetterData(object):
                     in self._etree.xpath(r'/togetter/tweet_list/tweet_data')]
     
     @property
-    def etree(self) -> lxml.etree._Element:
+    def etree(self) -> lxml.etree._ElementTree:
         return self._etree
     
     @property

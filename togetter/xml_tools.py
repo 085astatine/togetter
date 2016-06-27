@@ -5,7 +5,7 @@ from typing import Union
 import lxml.etree
 
 def save_as_xml(
-            element_tree: lxml.etree._ElementTree,
+            element_tree: Union[lxml.etree._Element, lxml.etree._ElementTree],
             filepath: Union[str, pathlib.Path],
             pretty_print: bool = True) -> None:
     """save ElementTree in the file as XML

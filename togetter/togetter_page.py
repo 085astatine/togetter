@@ -3,38 +3,46 @@
 import datetime
 import logging
 import time
+from typing import List, Optional
 import requests
 import lxml.etree
-from .tweet_data import TweetDataParser
+from .tweet_data import TweetData, TweetDataParser
 from .webpage import WebPage
 
 class TogetterPage(WebPage):
-    def __init__(self, id, page, session= None, logger= None):
+    def __init__(
+                self,
+                id: int,
+                page: int = 1,
+                session: requests.sessions.Session = None,
+                logger: logging.Logger = None) -> None:
         # logger設定
         if logger is None:
             logger = logging.getLogger(__name__)
         # 値設定
         self._id = id
         self._page_number = page
-        self._tweet_list = None
+        self._tweet_list = None # type: Optional[List[TweetData]]
         # 接続設定
         url = r'http://togetter.com/li/{0}'.format(id)
         params = {'page': page} if page != 1 else {}
-        WebPage.__init__(self, url,
-                         logger= logger,
-                         params= params,
-                         session= session)
+        WebPage.__init__(
+                    self,
+                    url,
+                    session= session,
+                    params= params,
+                    logger= logger)
         # logger出力
         self._logger.info('{0}'.format(self.__class__.__name__))
         self._logger.info('  title: {0}'.format(self.title))
         self._logger.info('  URL  : {0}'.format(self.url))
     
     @property
-    def id(self):
+    def id(self) -> int:
         return self._id
     
     @property
-    def title(self):
+    def title(self) -> Optional[str]:
         xpath = r'head/meta[@property="og:title"]'
         result = self.html.xpath(xpath)
         if len(result) == 1:
@@ -43,7 +51,7 @@ class TogetterPage(WebPage):
             return None
     
     @property
-    def csrf_token(self):
+    def csrf_token(self) -> Optional[str]:
         xpath = 'head/meta[@name="csrf_token"]'
         result = self.html.xpath(xpath)
         if len(result) == 1:
@@ -52,11 +60,11 @@ class TogetterPage(WebPage):
             return None
     
     @property
-    def csrf_secret(self):
+    def csrf_secret(self) -> Optional[str]:
         return self.session.cookies.get('csrf_secret', None)
     
     @property
-    def creator(self):
+    def creator(self) -> Optional[str]:
         xpath = r'head/meta[@name="twitter:creator"]'
         data = self.html.xpath(xpath)
         if len(data) == 1:
@@ -64,7 +72,7 @@ class TogetterPage(WebPage):
         else:
             return None
     
-    def get_tweet_list(self):
+    def get_tweet_list(self) -> List[TweetData]:
         if self._tweet_list is None:
             self._tweet_list = []
             # Tweet
@@ -79,11 +87,11 @@ class TogetterPage(WebPage):
                             _parse_tweet_data(_get_more_tweets(self)))
         return self._tweet_list
     
-    def more_tweets_exists(self):
+    def more_tweets_exists(self) -> bool:
         xpath = r'body//div[@class="more_tweet_box"]'
         return len(self.html.xpath(xpath)) == 1
     
-    def next_page(self):
+    def next_page(self) -> Optional['TogetterPage']:
         # 次のページが存在するか確認する
         xpath = r'head/link[@rel="next"]'
         if (len(self.html.xpath(xpath)) == 1):
@@ -95,7 +103,7 @@ class TogetterPage(WebPage):
         else:
             return None
     
-    def prev_page(self):
+    def prev_page(self) -> Optional['TogetterPage']:
         # 前のページが存在するか否か確認する
         xpath = r'head/link[@rel="prev"]'
         if (len(self.html.xpath(xpath)) == 1):
@@ -107,7 +115,7 @@ class TogetterPage(WebPage):
         else:
             return None
 
-def _get_more_tweets(self):
+def _get_more_tweets(self: TogetterPage) -> lxml.etree._Element:
     url = r'http://togetter.com/api/moreTweets/{0}'.format(self._id)
     data = {'page': 1,
             'csrf_token': self.csrf_token}
@@ -120,7 +128,7 @@ def _get_more_tweets(self):
     self._logger.debug('  csrfSecret: {0}'.format(self.csrf_secret))
     return tweet_data
 
-def _parse_tweet_data(tweet_etree):
+def _parse_tweet_data(tweet_etree: lxml.etree._Element) -> List[TweetData]:
     xpath = r'//li[@class="list_item"]/div[@class="list_box type_tweet"]'
     data_list = tweet_etree.xpath(xpath)
     return [TweetDataParser(data).parse() for data in data_list]
