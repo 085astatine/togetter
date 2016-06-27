@@ -71,5 +71,5 @@ class TogetterPageParser(object):
         return TogetterData(etree)
 
 def to_xml(id, xml_path, logger= None):
-    page = TogetterPage(id, logger= logger)
-    page.parse().save_as_xml(xml_path)
+    parser = TogetterPageParser(id, logger= logger)
+    parser.parse().save_as_xml(xml_path)
