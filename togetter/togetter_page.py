@@ -12,7 +12,7 @@ from .webpage import WebPage
 class TogetterPage(WebPage):
     def __init__(
                 self,
-                id: int,
+                page_id: int,
                 page: int = 1,
                 session: requests.sessions.Session = None,
                 logger: logging.Logger = None) -> None:
@@ -20,11 +20,11 @@ class TogetterPage(WebPage):
         if logger is None:
             logger = logging.getLogger(__name__)
         # 値設定
-        self._id = id
+        self._page_id = page_id
         self._page_number = page
         self._tweet_list = None # type: Optional[List[TweetData]]
         # 接続設定
-        url = r'http://togetter.com/li/{0}'.format(id)
+        url = r'http://togetter.com/li/{0}'.format(self._page_id)
         params = {'page': page} if page != 1 else {}
         WebPage.__init__(
                     self,
@@ -38,8 +38,8 @@ class TogetterPage(WebPage):
         self._logger.info('  URL  : {0}'.format(self.url))
     
     @property
-    def id(self) -> int:
-        return self._id
+    def page_id(self) -> int:
+        return self._page_id
     
     @property
     def title(self) -> Optional[str]:
@@ -96,7 +96,7 @@ class TogetterPage(WebPage):
         xpath = r'head/link[@rel="next"]'
         if (len(self.html.xpath(xpath)) == 1):
             return TogetterPage(
-                        self.id,
+                        self.page_id,
                         page= self._page_number + 1,
                         session= self.session,
                         logger= self._logger)
@@ -108,7 +108,7 @@ class TogetterPage(WebPage):
         xpath = r'head/link[@rel="prev"]'
         if (len(self.html.xpath(xpath)) == 1):
             return TogetterPage(
-                        self.id,
+                        self.page_id,
                         page= self._page_number - 1,
                         session= self.session,
                         logger= self._logger)
@@ -116,7 +116,7 @@ class TogetterPage(WebPage):
             return None
 
 def _get_more_tweets(self: TogetterPage) -> lxml.etree._Element:
-    url = r'http://togetter.com/api/moreTweets/{0}'.format(self._id)
+    url = r'http://togetter.com/api/moreTweets/{0}'.format(self.page_id)
     data = {'page': 1,
             'csrf_token': self.csrf_token}
     response = self._session.post(url, data= data)

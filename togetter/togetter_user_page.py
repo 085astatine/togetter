@@ -90,7 +90,7 @@ class TogetterPageInfo(object):
             return None
     
     @property
-    def id(self):
+    def page_id(self):
         url = self.url
         if not url is None:
             regex = re.match(r'http://togetter.com/li/(?P<id>[0-9]+)', url)
@@ -102,7 +102,7 @@ class TogetterPageInfo(object):
             return None
     
     def open(self, session= None, logger= None):
-        page_id = self.id
+        page_id = self.page_id
         if not page_id is None:
             return TogetterPageParser(
                         page_id,

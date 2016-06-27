@@ -60,7 +60,7 @@ class TogetterPageParser(object):
         title.text = self._initial_page.title
         # id
         page_id = lxml.etree.SubElement(root, 'id')
-        page_id.text = str(self._initial_page.id)
+        page_id.text = str(self._initial_page.page_id)
         # URL
         url = lxml.etree.SubElement(root, 'URL')
         url.text = self._initial_page.url
@@ -77,8 +77,8 @@ class TogetterPageParser(object):
             tweet_list.append(tweet_data)
         return TogetterData(etree)
 
-def to_xml(id: int,
+def to_xml(page_id: int,
            xml_path: Union[str, pathlib.Path],
            logger: logging.Logger = None):
-    parser = TogetterPageParser(id, logger= logger)
+    parser = TogetterPageParser(page_id, logger= logger)
     parser.parse().save_as_xml(xml_path)

@@ -34,7 +34,7 @@ class TogetterData(object):
             return None
     
     @property
-    def id(self) -> Optional[int]:
+    def page_id(self) -> Optional[int]:
         xpath = r'/togetter/id'
         data = self.etree.xpath(xpath)
         if len(data) == 1:
