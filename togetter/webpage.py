@@ -27,7 +27,7 @@ class WebPage:
             Logger
             Defauults to None, then new Logger will be Created"""
         self._logger = (logger
-                    if logger is not None else logging.getLoger(__name__))
+                    if logger is not None else logging.getLogger(__name__))
         self._session = session if session is not None else requests.Session()
         self._response = self._session.get(url, params= params)
         self._html = lxml.html.fromstring(self.response.content)
