@@ -23,7 +23,7 @@ class TogetterPageParser(object):
         # get Initial Page
         self._initial_page = TogetterPage(
                     page_id,
-                    page= 1,
+                    page_number= 1,
                     session= session,
                     logger= logger)
         # Page List
