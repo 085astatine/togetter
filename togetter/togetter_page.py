@@ -16,6 +16,19 @@ class TogetterPage(WebPage):
                 page_number: int = 1,
                 session: requests.sessions.Session = None,
                 logger: logging.Logger = None) -> None:
+        """Initialize
+
+        Args:
+        page_id (int): the ID of the togetter page.
+        page_number (int) optional:
+            The page number of this page.
+            Defaults to 1.
+        session (requests.sessions.Session) optional:
+            A Requests Session.
+            Defaults to None. Then new Session will be created.
+        logger (logging.Logger) optional:
+            Logger.
+            Defaults to None. Then new Logger will be created."""
         # logger設定
         if logger is None:
             logger = logging.getLogger(__name__)
@@ -77,6 +90,13 @@ class TogetterPage(WebPage):
             return None
     
     def get_tweet_list(self) -> List[TweetData]:
+        """TweetData list in this page.
+
+        If 「残りを読む」 exists in this page, then load more tweets.
+
+        Returns:
+            list[TweetData]
+        """
         if self._tweet_list is None:
             self._tweet_list = []
             # Tweet
@@ -92,11 +112,16 @@ class TogetterPage(WebPage):
         return self._tweet_list
     
     def more_tweets_exists(self) -> bool:
+        """Return that whether or not 「残りを読む」 exists in this page."""
         xpath = r'body//div[@class="more_tweet_box"]'
         return len(self.html.xpath(xpath)) == 1
     
     def next_page(self) -> Optional['TogetterPage']:
-        # 次のページが存在するか確認する
+        """Return the next page, if next page exists.
+
+        Returns:
+            TogetterPage: If next page exists.
+            None: If next page does not exist."""
         xpath = r'head/link[@rel="next"]'
         if (len(self.html.xpath(xpath)) == 1):
             return TogetterPage(
@@ -108,7 +133,11 @@ class TogetterPage(WebPage):
             return None
     
     def prev_page(self) -> Optional['TogetterPage']:
-        # 前のページが存在するか否か確認する
+        """Return the previous page, if previous page exists.
+
+        Returns:
+            TogetterPage: If previous page exists.
+            None: If previsous page does not exist."""
         xpath = r'head/link[@rel="prev"]'
         if (len(self.html.xpath(xpath)) == 1):
             return TogetterPage(

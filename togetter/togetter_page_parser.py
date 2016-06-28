@@ -17,6 +17,16 @@ class TogetterPageParser(object):
                 page_id: int,
                 session: requests.sessions.Session = None,
                 logger: logging.Logger = None) -> None:
+        """Initialize
+
+        Args:
+        page_id (int): the ID of the togetter page.
+        session (requests.sessions.Session) optional:
+            A Requests Session.
+            Defaults to None. Then new Session will be created.
+        logger (logging.Logger) optional:
+            Logger.
+            Defaults to None. Then new Logger will be created."""
         # logger設定
         if logger is None:
             logger = logging.getLogger(__name__)
@@ -31,7 +41,8 @@ class TogetterPageParser(object):
         # Tweet List
         self._tweet_list = None # type: Optional[List[TweetData]]
     
-    def load_page(self, wait_time: float= 1.0) -> List[TogetterPage]:
+    def load_page(self, wait_time: float= 1.0) -> None:
+        """Load all the pages of this togetter ID."""
         if self._page_list is None:
             self._page_list = []
             self._page_list.append(self._initial_page)
@@ -43,6 +54,10 @@ class TogetterPageParser(object):
                 time.sleep(wait_time)
     
     def get_tweet_list(self) -> List[TweetData]:
+        """Get TweetData list from all the pages.
+
+        Returns:
+            list[TweetData]"""
         if self._tweet_list is None:
             if self._page_list is None:
                 self.load_page()
@@ -52,6 +67,10 @@ class TogetterPageParser(object):
         return self._tweet_list
     
     def parse(self) -> TogetterData:
+        """create TogetterData of this togetter page ID.
+
+        Returns:
+            TogetterData"""
         # root
         root = lxml.etree.Element('togetter')
         etree = lxml.etree.ElementTree(root)
@@ -80,5 +99,14 @@ class TogetterPageParser(object):
 def to_xml(page_id: int,
            xml_path: Union[str, pathlib.Path],
            logger: logging.Logger = None):
+    """load Togetter pages, and output in the file as XML.
+
+    Args:
+    page_id (int): the ID of the togetter page.
+    xml_path (str, pathlib.Path): the path of the file to be output as XML.
+    logger (logging.Logger) optional:
+        Logger.
+        Defaults to None. Then new Logger will be created.
+    """
     parser = TogetterPageParser(page_id, logger= logger)
     parser.parse().save_as_xml(xml_path)
