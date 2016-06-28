@@ -30,6 +30,9 @@ class TogetterPageParser(object):
         # logger設定
         if logger is None:
             logger = logging.getLogger(__name__)
+        self._logger = logger
+        # Wait Time
+        self._wait_time = 1.0
         # get Initial Page
         self._initial_page = TogetterPage(
                     page_id,
@@ -41,7 +44,7 @@ class TogetterPageParser(object):
         # Tweet List
         self._tweet_list = None # type: Optional[List[TweetData]]
     
-    def load_page(self, wait_time: float= 1.0) -> None:
+    def load_page(self) -> None:
         """Load all the pages of this togetter ID."""
         if self._page_list is None:
             self._page_list = []
@@ -51,7 +54,7 @@ class TogetterPageParser(object):
                 if next_page is None:
                     break
                 self._page_list.append(next_page)
-                time.sleep(wait_time)
+                time.sleep(self.wait_time)
     
     def get_tweet_list(self) -> List[TweetData]:
         """Get TweetData list from all the pages.
@@ -95,6 +98,15 @@ class TogetterPageParser(object):
             tweet_data.set('index', str(i))
             tweet_list.append(tweet_data)
         return TogetterData(etree)
+    
+    @property
+    def wait_time(self) -> float:
+        return self._wait_time
+    @wait_time.setter
+    def wait_time(self, value: float):
+        self._wait_time = value
+        self._logger.debug(
+                    'set Wait Time: {0} seconds'.format(self._wait_time))
     
     @classmethod
     def save_as_xml(
