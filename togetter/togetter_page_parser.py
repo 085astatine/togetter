@@ -95,18 +95,21 @@ class TogetterPageParser(object):
             tweet_data.set('index', str(i))
             tweet_list.append(tweet_data)
         return TogetterData(etree)
+    
+    @classmethod
+    def save_as_xml(
+                cls,
+                page_id: int,
+                filepath: Union[str, pathlib.Path],
+                logger: logging.Logger = None):
+        """load Togetter pages, and output in the file as XML.
 
-def to_xml(page_id: int,
-           xml_path: Union[str, pathlib.Path],
-           logger: logging.Logger = None):
-    """load Togetter pages, and output in the file as XML.
-
-    Args:
-    page_id (int): the ID of the togetter page.
-    xml_path (str, pathlib.Path): the path of the file to be output as XML.
-    logger (logging.Logger) optional:
-        Logger.
-        Defaults to None. Then new Logger will be created.
-    """
-    parser = TogetterPageParser(page_id, logger= logger)
-    parser.parse().save_as_xml(xml_path)
+        Args:
+        page_id (int): the ID of the togetter page.
+        filepath (str, pathlib.Path): the path of the file to be output as XML.
+        logger (logging.Logger) optional:
+            Logger.
+            Defaults to None. Then new Logger will be created.
+        """
+        parser = TogetterPageParser(page_id, logger= logger)
+        parser.parse().save_as_xml(filepath)
