@@ -2,6 +2,7 @@
 
 import datetime
 import logging
+import re
 import time
 from typing import List, Optional
 import requests
@@ -148,18 +149,21 @@ class TogetterPage(WebPage):
         else:
             return None
 
-def _get_more_tweets(self: TogetterPage) -> lxml.etree._Element:
-    url = r'http://togetter.com/api/moreTweets/{0}'.format(self.page_id)
-    data = {'page': 1,
-            'csrf_token': self.csrf_token}
-    response = self._session.post(url, data= data)
-    tweet_data = lxml.html.fromstring(response.content.decode('utf-8'))
-    # logger出力
-    self._logger.info('getMoreTweets')
-    self._logger.info('  URL: {0}'.format(response.url))
-    self._logger.debug('  csrfToken : {0}'.format(self.csrf_token))
-    self._logger.debug('  csrfSecret: {0}'.format(self.csrf_secret))
-    return tweet_data
+def _get_more_tweets(self: TogetterPage) -> Optional[lxml.etree._Element]:
+    self._logger.info('get more tweets')
+    regex = re.compile('\nvar more_tweet_content = \"(?P<content>.+)\"')
+    for script_node in self.html.xpath(r'//script[@type= "text/javascript"]'):
+        if script_node.text is None: continue
+        match = regex.match(script_node.text)
+        if match:
+            return lxml.html.fromstring(
+                        match.group('content')
+                                .replace('\\/', '/')
+                                .encode('utf-8')
+                                .decode('unicode_escape'))
+    else:
+        self._logger.error('could not get more tweet')
+        return None
 
 def _parse_tweet_data(tweet_etree: lxml.etree._Element) -> List[TweetData]:
     xpath = r'//li[@class="list_item"]/div[@class="list_box type_tweet"]'
