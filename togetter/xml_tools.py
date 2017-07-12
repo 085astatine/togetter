@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 
+
 import pathlib
 from typing import Union
 import lxml.etree
+
 
 def save_as_xml(
             element_tree: Union[lxml.etree._Element, lxml.etree._ElementTree],
@@ -19,9 +21,9 @@ def save_as_xml(
     """
     if not isinstance(filepath, pathlib.Path):
         filepath = pathlib.Path(filepath)
-    with filepath.open(mode= 'w', encoding= 'utf-8', newline= '') as file:
+    with filepath.open(mode='w', encoding='utf-8', newline='') as file:
         file.write(lxml.etree.tostring(
                     element_tree,
-                    encoding= 'utf-8',
-                    pretty_print= pretty_print,
-                    xml_declaration= True).decode('utf-8'))
+                    encoding='utf-8',
+                    pretty_print=pretty_print,
+                    xml_declaration=True).decode('utf-8'))
