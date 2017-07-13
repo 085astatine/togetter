@@ -151,16 +151,16 @@ class TogetterPage(WebPage):
 
 def _get_more_tweets(self: TogetterPage) -> Optional[lxml.etree._Element]:
     self._logger.info('get more tweets')
-    regex = re.compile('\nvar more_tweet_content = \"(?P<content>.+)\"')
+    regex = re.compile('\nvar moreTweetContent = \"(?P<content>.+)\";$')
     for script_node in self.html.xpath(r'//script[@type= "text/javascript"]'):
-        if script_node.text is None: continue
+        if script_node.text is None:
+            continue
         match = regex.match(script_node.text)
         if match:
-            return lxml.html.fromstring(
-                        match.group('content')
-                                .replace('\\/', '/')
-                                .encode('utf-8')
-                                .decode('unicode_escape'))
+            return lxml.html.fromstring(match.group('content')
+                                        .replace(r'\/', '/')
+                                        .encode('utf-8')
+                                        .decode('unicode_escape'))
     else:
         self._logger.error('could not get more tweet')
         return None
