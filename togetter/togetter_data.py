@@ -8,6 +8,7 @@ import lxml.etree
 from .tweet_data import TweetData
 from .xml_tools import save_as_xml as _save_as_xml
 
+
 class TogetterData(object):
     def __init__(self, element_tree: lxml.etree._ElementTree) -> None:
         """Initialize
@@ -19,11 +20,11 @@ class TogetterData(object):
         self._tweet_list = [
                     TweetData(data) for data
                     in self._etree.xpath(r'/togetter/tweet_list/tweet_data')]
-    
+
     @property
     def etree(self) -> lxml.etree._ElementTree:
         return self._etree
-    
+
     @property
     def title(self) -> Optional[str]:
         xpath = r'/togetter/title'
@@ -32,7 +33,7 @@ class TogetterData(object):
             return data[0].text
         else:
             return None
-    
+
     @property
     def page_id(self) -> Optional[int]:
         xpath = r'/togetter/id'
@@ -41,7 +42,7 @@ class TogetterData(object):
             return data[0].text
         else:
             return None
-    
+
     @property
     def url(self) -> Optional[str]:
         xpath = r'/togetter/URL'
@@ -50,7 +51,7 @@ class TogetterData(object):
             return data[0].text
         else:
             return None
-    
+
     @property
     def access_timestamp(self) -> Optional[float]:
         xpath = r'/togetter/access_time'
@@ -59,26 +60,26 @@ class TogetterData(object):
             return float(data[0].get('timestamp'))
         else:
             return None
-    
+
     @property
     def access_time(self) -> Optional[datetime.datetime]:
         timestamp = self.access_timestamp
-        if not timestamp is None:
+        if timestamp is not None:
             return datetime.datetime.fromtimestamp(timestamp)
         else:
             return None
-    
+
     @property
     def tweet_list(self) -> List[TweetData]:
         return self._tweet_list
-    
+
     def copied(self) -> 'TogetterData':
         """Returns deep copied self"""
         return TogetterData(copy.deepcopy(self.etree))
-    
+
     def save_as_xml(self,
-                filepath: Union[str, pathlib.Path],
-                pretty_print: bool = True) -> None:
+                    filepath: Union[str, pathlib.Path],
+                    pretty_print: bool = True) -> None:
         """Save TogetterData in the file as XML
 
         Args:
@@ -88,7 +89,7 @@ class TogetterData(object):
             Defaults to True.
         """
         _save_as_xml(self.etree, filepath, pretty_print)
-    
+
     @classmethod
     def load_xml(cls, filepath: Union[str, pathlib.Path]) -> "TogetterData":
         """load TogetterData from XML file
@@ -103,6 +104,6 @@ class TogetterData(object):
             filepath = pathlib.Path(filepath)
         xml_parser = lxml.etree.XMLParser(remove_blank_text=True)
         etree = lxml.etree.XML(
-                    filepath.open(encoding= 'utf-8').detach().read(),
-                    parser= xml_parser)
+                    filepath.open(encoding='utf-8').detach().read(),
+                    parser=xml_parser)
         return TogetterData(etree)

@@ -1,10 +1,12 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
+
 import logging
 import togetter
 
-if __name__=='__main__':
+
+if __name__ == '__main__':
     print('TogetterSample')
     # logger setting
     logger = logging.getLogger('TogetterSample')
@@ -23,7 +25,7 @@ if __name__=='__main__':
             print("your input<{0}> is invalid".format(repr(input_id)))
             print(str(error))
     # get tweet from togetter
-    parser = togetter.TogetterPageParser(togetter_id, logger= logger)
+    parser = togetter.TogetterPageParser(togetter_id, logger=logger)
     parser.wait_time = 1.0
     # save as XML
     xml_file = 'togetter_{0}.xml'.format(togetter_id)
