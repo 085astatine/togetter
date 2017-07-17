@@ -61,18 +61,14 @@ class TweetData(object):
 
     @staticmethod
     def from_element(etree: lxml.etree._Element):
-        tweet = etree.xpath('./tweet')[0].text
-        tweet_link = etree.xpath('./link')[0].text
-        user_id = etree.xpath('./user')[0].get('id')
-        user_name = etree.xpath('./user')[0].get('name')
-        user_link = etree.xpath('./user')[0].get('link')
-        timestamp = int(etree.xpath('./datetime')[0].get('timestamp'))
-        return TweetData(tweet,
-                         tweet_link,
-                         user_id,
-                         user_name,
-                         user_link,
-                         timestamp)
+        kwargs = {}
+        kwargs['tweet'] = etree.xpath('tweet')[0].text
+        kwargs['tweet_link'] = etree.xpath('link')[0].text
+        kwargs['user_id'] = etree.xpath('user')[0].get('id')
+        kwargs['user_name'] = etree.xpath('user')[0].get('name')
+        kwargs['user_link'] = etree.xpath('user')[0].get('link')
+        kwargs['timestamp'] = int(etree.xpath('datetime')[0].get('timestamp'))
+        return TweetData(**kwargs)
 
 
 class TweetDataParser(object):
@@ -156,12 +152,14 @@ class TweetDataParser(object):
 
     def parse(self) -> TweetData:
         """Create TweetData class"""
-        return TweetData(self.tweet,
-                         self.tweet_link,
-                         self.user_id,
-                         self.user_name,
-                         self.user_link,
-                         self.timestamp)
+        kwargs = {}
+        kwargs['tweet'] = self.tweet
+        kwargs['tweet_link'] = self.tweet_link
+        kwargs['user_id'] = self.user_id
+        kwargs['user_name'] = self.user_name
+        kwargs['user_link'] = self.user_link
+        kwargs['timestamp'] = self.timestamp
+        return TweetData(**kwargs)
 
 
 def _to_element(
