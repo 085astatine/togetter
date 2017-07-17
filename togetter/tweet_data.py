@@ -8,83 +8,71 @@ import lxml.etree
 
 
 class TweetData(object):
-    def __init__(self, element: lxml.etree._Element) -> None:
+    def __init__(self,
+                 tweet: str,
+                 tweet_link: str,
+                 user_id: str,
+                 user_name: str,
+                 user_link: str,
+                 timestamp: int) -> None:
         """Initialize
 
         Args:
         element (lxml.etree._Element):
             Element representing the tweet"""
-        self._element = element
+        self._tweet = tweet
+        self._tweet_link = tweet_link
+        self._user_id = user_id
+        self._user_name = user_name
+        self._user_link = user_link
+        self._timestamp = timestamp
 
     @property
-    def element(self) -> lxml.etree._Element:
-        return self._element
-
-    @property
-    def tweet(self) -> Optional[str]:
-        xpath = r'./tweet'
-        data = self.element.xpath('./tweet')
-        if len(data) == 1:
-            return data[0].text
-        else:
-            None
-
-    @property
-    def user_name(self) -> Optional[str]:
-        xpath = r'./user'
-        result = self.element.xpath(xpath)
-        if len(result) == 1:
-            return result[0].get('name')
-        else:
-            return None
-
-    @property
-    def user_id(self) -> Optional[str]:
-        xpath = r'./user'
-        result = self.element.xpath(xpath)
-        if len(result) == 1:
-            return result[0].get('id')
-        else:
-            return None
-
-    @property
-    def user_link(self) -> Optional[str]:
-        xpath = r'./user'
-        result = self.element.xpath(xpath)
-        if len(result) == 1:
-            return result[0].get('link')
-        else:
-            return None
+    def tweet(self) -> str:
+        return self._tweet
 
     @property
     def tweet_link(self) -> Optional[str]:
-        xpath = r'./link'
-        result = self.element.xpath(xpath)
-        if len(result) == 1:
-            return result[0].text
-        else:
-            return None
+        return self._tweet_link
 
     @property
-    def timestamp(self) -> Optional[int]:
-        xpath = r'./datetime'
-        result = self.element.xpath(xpath)
-        if len(result) == 1:
-            return int(result[0].get('timestamp'))
-        else:
-            return None
+    def user_id(self) -> str:
+        return self._user_id
 
     @property
-    def datetime(self) -> Optional[datetime.datetime]:
-        timestamp = self.timestamp
-        if timestamp is not None:
-            return datetime.datetime.fromtimestamp(timestamp)
-        else:
-            return None
+    def user_name(self) -> str:
+        return self._user_name
+
+    @property
+    def user_link(self) -> str:
+        return self._user_link
+
+    @property
+    def timestamp(self) -> int:
+        return self._timestamp
+
+    @property
+    def datetime(self) -> datetime.datetime:
+        return datetime.datetime.fromtimestamp(self._timestamp)
 
     def to_element(self) -> lxml.etree._Element:
         """Create etree element"""
         return _to_element(self)
+
+    @staticmethod
+    def from_element(etree: lxml.etree._Element):
+        tweet = etree.xpath('./tweet')[0].text
+        tweet_link = etree.xpath('./link')[0].text
+        user_id = etree.xpath('./user')[0].get('id')
+        user_name = etree.xpath('./user')[0].get('name')
+        user_link = etree.xpath('./user')[0].get('link')
+        timestamp = int(etree.xpath('./datetime')[0].get('timestamp'))
+        return TweetData(tweet,
+                         tweet_link,
+                         user_id,
+                         user_name,
+                         user_link,
+                         timestamp)
 
 
 class TweetDataParser(object):
@@ -168,7 +156,12 @@ class TweetDataParser(object):
 
     def parse(self) -> TweetData:
         """Create TweetData class"""
-        return TweetData(self.to_element())
+        return TweetData(self.tweet,
+                         self.tweet_link,
+                         self.user_id,
+                         self.user_name,
+                         self.user_link,
+                         self.timestamp)
 
 
 def _to_element(

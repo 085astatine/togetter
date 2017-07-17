@@ -18,7 +18,7 @@ class TogetterData(object):
             the etree element representing TogetterData"""
         self._etree = element_tree
         self._tweet_list = [
-                    TweetData(data) for data
+                    TweetData.from_element(data) for data
                     in self._etree.xpath(r'/togetter/tweet_list/tweet_data')]
 
     @property
