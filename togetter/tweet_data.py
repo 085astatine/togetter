@@ -3,7 +3,6 @@
 
 import datetime
 from collections import OrderedDict
-from typing import Optional, Union
 import lxml.etree
 
 
@@ -32,7 +31,7 @@ class TweetData(object):
         return self._tweet
 
     @property
-    def tweet_link(self) -> Optional[str]:
+    def tweet_link(self) -> str:
         return self._tweet_link
 
     @property
@@ -103,66 +102,50 @@ class TweetDataParser(object):
         return self._element
 
     @property
-    def tweet(self) -> Optional[str]:
+    def tweet(self) -> str:
         xpath = r'.//div[@class= "tweet emj"]'
         result = self.element.xpath(xpath)
-        if len(result) == 1:
-            return ''.join(result[0].itertext())
-        else:
-            return None
+        assert len(result) == 1
+        return ''.join(result[0].itertext())
 
     @property
-    def user_name(self) -> Optional[str]:
+    def user_name(self) -> str:
         xpath = r'.//a[@class= "user_link"]/strong'
         result = self.element.xpath(xpath)
-        if len(result) == 1:
-            return result[0].text
-        else:
-            return ''
+        assert len(result) == 1
+        return result[0].text
 
     @property
-    def user_id(self) -> Optional[str]:
+    def user_id(self) -> str:
         xpath = r'.//a[@class= "user_link"]/span[@class= "status_name"]'
         result = self.element.xpath(xpath)
-        if len(result) == 1:
-            return result[0].text
-        else:
-            return None
+        assert len(result) == 1
+        return result[0].text
 
     @property
-    def user_link(self) -> Optional[str]:
+    def user_link(self) -> str:
         xpath = r'.//a[@class= "user_link"]'
         result = self.element.xpath(xpath)
-        if len(result) == 1:
-            return result[0].get('href')
-        else:
-            return None
+        assert len(result) == 1
+        return result[0].get('href')
 
     @property
-    def tweet_link(self) -> Optional[str]:
+    def tweet_link(self) -> str:
         xpath = r'.//a[@class= "timestamp"]'
         result = self.element.xpath(xpath)
-        if len(result) == 1:
-            return result[0].get('href')
-        else:
-            return None
+        assert len(result) == 1
+        return result[0].get('href')
 
     @property
-    def timestamp(self) -> Optional[int]:
+    def timestamp(self) -> int:
         xpath = r'.//a[@class= "timestamp"]'
         result = self.element.xpath(xpath)
-        if len(result) == 1:
-            return int(result[0].get('data-timestamp'))
-        else:
-            return None
+        assert len(result) == 1
+        return int(result[0].get('data-timestamp'))
 
     @property
-    def datetime(self) -> Optional[datetime.datetime]:
-        timestamp = self.timestamp
-        if timestamp is not None:
-            return datetime.datetime.fromtimestamp(timestamp)
-        else:
-            return None
+    def datetime(self) -> datetime.datetime:
+        return datetime.datetime.fromtimestamp(self.timestamp)
 
     def parse(self) -> TweetData:
         """Create TweetData class"""
