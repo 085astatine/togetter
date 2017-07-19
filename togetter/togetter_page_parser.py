@@ -8,7 +8,7 @@ import pathlib
 from typing import Any, Dict, List, Optional, Union
 import requests
 import lxml.etree
-from .togetter_data import TogetterData
+from .togetter_data import Togetter
 from .togetter_page import TogetterPage
 from .tweet_data import Tweet
 
@@ -71,18 +71,18 @@ class TogetterPageParser(object):
                 self._tweet_list.extend(page.get_tweet_list())
         return self._tweet_list
 
-    def parse(self) -> TogetterData:
-        """create TogetterData of this togetter page ID.
+    def parse(self) -> Togetter:
+        """create Togetter of this togetter page ID.
 
         Returns:
-            TogetterData"""
+            Togetter"""
         kwargs: Dict[str, Any] = {}
         kwargs['title'] = self._initial_page.title
         kwargs['page_id'] = self._initial_page.page_id
         kwargs['url'] = self._initial_page.url
         kwargs['access_timestamp'] = datetime.datetime.today().timestamp()
         kwargs['tweet_list'] = self.get_tweet_list()
-        return TogetterData(**kwargs)
+        return Togetter(**kwargs)
 
     @property
     def wait_time(self) -> float:

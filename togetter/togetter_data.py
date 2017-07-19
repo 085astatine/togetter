@@ -9,7 +9,7 @@ from .tweet_data import Tweet
 from .xml_tools import save_as_xml as _save_as_xml
 
 
-class TogetterData(object):
+class Togetter(object):
     def __init__(self,
                  title: str,
                  page_id: int,
@@ -73,7 +73,7 @@ class TogetterData(object):
         return root
 
     @staticmethod
-    def from_etree(etree: lxml.etree._ElementTree) -> 'TogetterData':
+    def from_etree(etree: lxml.etree._ElementTree) -> 'Togetter':
         assert etree.tag == 'togetter'
         kwargs = {}
         kwargs['title'] = etree.find('title').text
@@ -84,12 +84,12 @@ class TogetterData(object):
         kwargs['tweet_list'] = [Tweet.from_element(element)
                                 for element
                                 in etree.find('tweet_list').iterchildren()]
-        return TogetterData(**kwargs)
+        return Togetter(**kwargs)
 
     def save_as_xml(self,
                     filepath: Union[str, pathlib.Path],
                     pretty_print: bool = True) -> None:
-        """Save TogetterData in the file as XML
+        """Save Togetter in the file as XML
 
         Args:
         filepath (str, pathlib.Path): The path of file to be output as XML
@@ -100,19 +100,19 @@ class TogetterData(object):
         _save_as_xml(self.to_etree(), filepath, pretty_print)
 
     @classmethod
-    def load_xml(cls, filepath: Union[str, pathlib.Path]) -> "TogetterData":
-        """load TogetterData from XML file
+    def load_xml(cls, filepath: Union[str, pathlib.Path]) -> "Togetter":
+        """load Togetter from XML file
 
         Args:
         filepath (str, pathlib.Path):
-            The path of the XML file that represents TogetterData
+            The path of the XML file that represents Togetter
 
         Returns:
-            TogetterData: that has been generated from the XML file"""
+            Togetter: that has been generated from the XML file"""
         if not isinstance(filepath, pathlib.Path):
             filepath = pathlib.Path(filepath)
         xml_parser = lxml.etree.XMLParser(remove_blank_text=True)
         etree = lxml.etree.XML(
                     filepath.open(encoding='utf-8').detach().read(),
                     parser=xml_parser)
-        return TogetterData.from_etree(etree)
+        return Togetter.from_etree(etree)
