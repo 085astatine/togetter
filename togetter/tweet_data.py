@@ -77,15 +77,15 @@ class TweetData(object):
         return root
 
     @staticmethod
-    def from_element(etree: lxml.etree._Element):
+    def from_element(etree: lxml.etree._Element) -> 'TweetData':
         assert etree.tag == 'tweet_data'
         kwargs = {}
-        kwargs['tweet'] = etree.xpath('tweet')[0].text
-        kwargs['tweet_link'] = etree.xpath('link')[0].text
-        kwargs['user_id'] = etree.xpath('user')[0].get('id')
-        kwargs['user_name'] = etree.xpath('user')[0].get('name')
-        kwargs['user_link'] = etree.xpath('user')[0].get('link')
-        kwargs['timestamp'] = int(etree.xpath('datetime')[0].get('timestamp'))
+        kwargs['tweet'] = etree.find('tweet').text
+        kwargs['tweet_link'] = etree.find('link').text
+        kwargs['user_id'] = etree.find('user').get('id')
+        kwargs['user_name'] = etree.find('user').get('name')
+        kwargs['user_link'] = etree.find('user').get('link')
+        kwargs['timestamp'] = int(etree.find('datetime').get('timestamp'))
         return TweetData(**kwargs)
 
 
