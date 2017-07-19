@@ -78,6 +78,7 @@ class TweetData(object):
 
     @staticmethod
     def from_element(etree: lxml.etree._Element):
+        assert etree.tag == 'tweet_data'
         kwargs = {}
         kwargs['tweet'] = etree.xpath('tweet')[0].text
         kwargs['tweet_link'] = etree.xpath('link')[0].text

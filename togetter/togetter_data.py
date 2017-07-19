@@ -83,7 +83,7 @@ class TogetterData(object):
                     etree.find('access_time').get('timestamp'))
         kwargs['tweet_list'] = [TweetData.from_element(element)
                                 for element
-                                in etree.xpath('tweet_list/tweet_data')]
+                                in etree.find('tweet_list').iterchildren()]
         return TogetterData(**kwargs)
 
     def save_as_xml(self,
