@@ -10,7 +10,7 @@ import requests
 import lxml.etree
 from .togetter_data import TogetterData
 from .togetter_page import TogetterPage
-from .tweet_data import TweetData
+from .tweet_data import Tweet
 
 
 class TogetterPageParser(object):
@@ -44,7 +44,7 @@ class TogetterPageParser(object):
         # Page List
         self._page_list = None  # type: Optional[List[TogetterPage]]
         # Tweet List
-        self._tweet_list = None  # type: Optional[List[TweetData]]
+        self._tweet_list = None  # type: Optional[List[Tweet]]
 
     def load_page(self) -> None:
         """Load all the pages of this togetter ID."""
@@ -58,11 +58,11 @@ class TogetterPageParser(object):
                 self._page_list.append(next_page)
                 time.sleep(self.wait_time)
 
-    def get_tweet_list(self) -> List[TweetData]:
-        """Get TweetData list from all the pages.
+    def get_tweet_list(self) -> List[Tweet]:
+        """Get Tweet list from all the pages.
 
         Returns:
-            list[TweetData]"""
+            list[Tweet]"""
         if self._tweet_list is None:
             if self._page_list is None:
                 self.load_page()

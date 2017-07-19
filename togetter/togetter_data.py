@@ -5,7 +5,7 @@ import datetime
 import pathlib
 from typing import List, Union
 import lxml.etree
-from .tweet_data import TweetData
+from .tweet_data import Tweet
 from .xml_tools import save_as_xml as _save_as_xml
 
 
@@ -15,7 +15,7 @@ class TogetterData(object):
                  page_id: int,
                  url: str,
                  access_timestamp: float,
-                 tweet_list: List[TweetData]) -> None:
+                 tweet_list: List[Tweet]) -> None:
         """Initialize"""
         self._title = title
         self._page_id = page_id
@@ -44,7 +44,7 @@ class TogetterData(object):
         return datetime.datetime.fromtimestamp(self.access_timestamp)
 
     @property
-    def tweet_list(self) -> List[TweetData]:
+    def tweet_list(self) -> List[Tweet]:
         return self._tweet_list
 
     def to_etree(self) -> lxml.etree._ElementTree:
@@ -81,7 +81,7 @@ class TogetterData(object):
         kwargs['url'] = etree.find('URL').text
         kwargs['access_timestamp'] = float(
                     etree.find('access_time').get('timestamp'))
-        kwargs['tweet_list'] = [TweetData.from_element(element)
+        kwargs['tweet_list'] = [Tweet.from_element(element)
                                 for element
                                 in etree.find('tweet_list').iterchildren()]
         return TogetterData(**kwargs)

@@ -8,7 +8,7 @@ import time
 from typing import List, Optional
 import requests
 import lxml.etree
-from .tweet_data import TweetData, TweetDataParser
+from .tweet_data import Tweet, TweetParser
 from .webpage import WebPage
 
 
@@ -38,7 +38,7 @@ class TogetterPage(WebPage):
         # 値設定
         self._page_id = page_id
         self._page_number = page_number
-        self._tweet_list = None  # type: Optional[List[TweetData]]
+        self._tweet_list = None  # type: Optional[List[Tweet]]
         # 接続設定
         url = r'http://togetter.com/li/{0}'.format(self._page_id)
         params = {'page': self._page_number} if self._page_number != 1 else {}
@@ -92,13 +92,13 @@ class TogetterPage(WebPage):
         else:
             return None
 
-    def get_tweet_list(self) -> List[TweetData]:
-        """TweetData list in this page.
+    def get_tweet_list(self) -> List[Tweet]:
+        """Tweet list in this page.
 
         If 「残りを読む」 exists in this page, then load more tweets.
 
         Returns:
-            list[TweetData]
+            list[Tweet]
         """
         if self._tweet_list is None:
             self._tweet_list = []
@@ -169,7 +169,7 @@ def _get_more_tweets(self: TogetterPage) -> Optional[lxml.etree._Element]:
         return None
 
 
-def _parse_tweet_data(tweet_etree: lxml.etree._Element) -> List[TweetData]:
+def _parse_tweet_data(tweet_etree: lxml.etree._Element) -> List[Tweet]:
     xpath = r'//li[@class="list_item"]/div[@class="list_box type_tweet"]'
     data_list = tweet_etree.xpath(xpath)
-    return [TweetDataParser(data).parse() for data in data_list]
+    return [TweetParser(data).parse() for data in data_list]
