@@ -8,9 +8,9 @@ import pathlib
 from typing import Any, Dict, List, Optional, Union
 import requests
 import lxml.etree
-from .togetter_data import Togetter
+from .togetter import Togetter
 from .togetter_page import TogetterPage
-from .tweet_data import Tweet
+from .tweet import Tweet
 
 
 class TogetterPageParser(object):

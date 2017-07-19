@@ -8,7 +8,7 @@ import time
 from typing import List, Optional
 import requests
 import lxml.etree
-from .tweet_data import Tweet, TweetParser
+from .tweet import Tweet, TweetParser
 from .webpage import WebPage
 
 

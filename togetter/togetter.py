@@ -5,7 +5,7 @@ import datetime
 import pathlib
 from typing import List, Union
 import lxml.etree
-from .tweet_data import Tweet
+from .tweet import Tweet
 from .xml_tools import save_as_xml as _save_as_xml
 
 
