@@ -5,7 +5,7 @@ import datetime
 import logging
 import time
 import pathlib
-from typing import List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 import requests
 import lxml.etree
 from .togetter_data import TogetterData
@@ -76,30 +76,13 @@ class TogetterPageParser(object):
 
         Returns:
             TogetterData"""
-        # root
-        root = lxml.etree.Element('togetter')
-        etree = lxml.etree.ElementTree(root)
-        # title
-        title = lxml.etree.SubElement(root, 'title')
-        title.text = self._initial_page.title
-        # id
-        page_id = lxml.etree.SubElement(root, 'id')
-        page_id.text = str(self._initial_page.page_id)
-        # URL
-        url = lxml.etree.SubElement(root, 'URL')
-        url.text = self._initial_page.url
-        # AccessTime
-        now_time = datetime.datetime.today()
-        access_time = lxml.etree.SubElement(root, 'access_time')
-        access_time.text = str(now_time)
-        access_time.set('timestamp', str(now_time.timestamp()))
-        # tweet data
-        tweet_list = lxml.etree.SubElement(root, 'tweet_list')
-        for i, tweet in enumerate(self.get_tweet_list()):
-            tweet_data = tweet.to_element()
-            tweet_data.set('index', str(i))
-            tweet_list.append(tweet_data)
-        return TogetterData(etree)
+        kwargs: Dict[str, Any] = {}
+        kwargs['title'] = self._initial_page.title
+        kwargs['page_id'] = self._initial_page.page_id
+        kwargs['url'] = self._initial_page.url
+        kwargs['access_timestamp'] = datetime.datetime.today().timestamp()
+        kwargs['tweet_list'] = self.get_tweet_list()
+        return TogetterData(**kwargs)
 
     @property
     def wait_time(self) -> float:

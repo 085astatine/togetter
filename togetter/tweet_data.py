@@ -1,90 +1,89 @@
 # -*- coding: utf-8 -*-
 
 
-import datetime
+import datetime as _datetime
 from collections import OrderedDict
-from typing import Optional, Union
+from typing import Any, Dict
 import lxml.etree
 
 
 class TweetData(object):
-    def __init__(self, element: lxml.etree._Element) -> None:
-        """Initialize
-
-        Args:
-        element (lxml.etree._Element):
-            Element representing the tweet"""
-        self._element = element
-
-    @property
-    def element(self) -> lxml.etree._Element:
-        return self._element
-
-    @property
-    def tweet(self) -> Optional[str]:
-        xpath = r'./tweet'
-        data = self.element.xpath('./tweet')
-        if len(data) == 1:
-            return data[0].text
-        else:
-            None
+    def __init__(self,
+                 tweet: str,
+                 tweet_link: str,
+                 user_id: str,
+                 user_name: str,
+                 user_link: str,
+                 timestamp: int) -> None:
+        """Initialize"""
+        self._tweet = tweet
+        self._tweet_link = tweet_link
+        self._user_id = user_id
+        self._user_name = user_name
+        self._user_link = user_link
+        self._timestamp = timestamp
 
     @property
-    def user_name(self) -> Optional[str]:
-        xpath = r'./user'
-        result = self.element.xpath(xpath)
-        if len(result) == 1:
-            return result[0].get('name')
-        else:
-            return None
+    def tweet(self) -> str:
+        return self._tweet
 
     @property
-    def user_id(self) -> Optional[str]:
-        xpath = r'./user'
-        result = self.element.xpath(xpath)
-        if len(result) == 1:
-            return result[0].get('id')
-        else:
-            return None
+    def tweet_link(self) -> str:
+        return self._tweet_link
 
     @property
-    def user_link(self) -> Optional[str]:
-        xpath = r'./user'
-        result = self.element.xpath(xpath)
-        if len(result) == 1:
-            return result[0].get('link')
-        else:
-            return None
+    def user_id(self) -> str:
+        return self._user_id
 
     @property
-    def tweet_link(self) -> Optional[str]:
-        xpath = r'./link'
-        result = self.element.xpath(xpath)
-        if len(result) == 1:
-            return result[0].text
-        else:
-            return None
+    def user_name(self) -> str:
+        return self._user_name
 
     @property
-    def timestamp(self) -> Optional[int]:
-        xpath = r'./datetime'
-        result = self.element.xpath(xpath)
-        if len(result) == 1:
-            return int(result[0].get('timestamp'))
-        else:
-            return None
+    def user_link(self) -> str:
+        return self._user_link
 
     @property
-    def datetime(self) -> Optional[datetime.datetime]:
-        timestamp = self.timestamp
-        if timestamp is not None:
-            return datetime.datetime.fromtimestamp(timestamp)
-        else:
-            return None
+    def timestamp(self) -> int:
+        return self._timestamp
 
-    def to_element(self) -> lxml.etree._Element:
+    @property
+    def datetime(self) -> _datetime.datetime:
+        return _datetime.datetime.fromtimestamp(self._timestamp)
+
+    def to_element(self) -> lxml.etree._ElementTree:
         """Create etree element"""
-        return _to_element(self)
+        root = lxml.etree.Element('tweet_data')
+        # user
+        user_attribute = OrderedDict([
+                    ('id', self.user_id),
+                    ('name', self.user_name),
+                    ('link', self.user_link),
+                    ])
+        user = lxml.etree.SubElement(root, 'user', attrib=user_attribute)
+        # link
+        link = lxml.etree.SubElement(root, 'link')
+        link.text = self.tweet_link
+        # tweet
+        tweet = lxml.etree.SubElement(root, 'tweet')
+        tweet.text = self.tweet
+        # datetime
+        date = lxml.etree.SubElement(root, 'datetime')
+        date.text = str(self.datetime)
+        date.set('timestamp', str(self.timestamp))
+        return root
+
+    @staticmethod
+    def from_element(etree: lxml.etree._Element) -> 'TweetData':
+        assert etree.tag == 'tweet_data'
+        kwargs = {}
+        kwargs['tweet'] = etree.find('tweet').text
+        kwargs['tweet_link'] = etree.find('link').text
+        kwargs['user_id'] = etree.find('user').get('id')
+        kwargs['user_name'] = etree.find('user').get('name')
+        kwargs['user_link'] = etree.find('user').get('link')
+        kwargs['timestamp'] = int(etree.find('datetime').get('timestamp'))
+        return TweetData(**kwargs)
 
 
 class TweetDataParser(object):
@@ -101,94 +100,58 @@ class TweetDataParser(object):
         return self._element
 
     @property
-    def tweet(self) -> Optional[str]:
+    def tweet(self) -> str:
         xpath = r'.//div[@class= "tweet emj"]'
         result = self.element.xpath(xpath)
-        if len(result) == 1:
-            return ''.join(result[0].itertext())
-        else:
-            return None
+        assert len(result) == 1
+        return ''.join(result[0].itertext())
 
     @property
-    def user_name(self) -> Optional[str]:
+    def user_name(self) -> str:
         xpath = r'.//a[@class= "user_link"]/strong'
         result = self.element.xpath(xpath)
-        if len(result) == 1:
-            return result[0].text
-        else:
-            return ''
+        assert len(result) == 1
+        return result[0].text
 
     @property
-    def user_id(self) -> Optional[str]:
+    def user_id(self) -> str:
         xpath = r'.//a[@class= "user_link"]/span[@class= "status_name"]'
         result = self.element.xpath(xpath)
-        if len(result) == 1:
-            return result[0].text
-        else:
-            return None
+        assert len(result) == 1
+        return result[0].text
 
     @property
-    def user_link(self) -> Optional[str]:
+    def user_link(self) -> str:
         xpath = r'.//a[@class= "user_link"]'
         result = self.element.xpath(xpath)
-        if len(result) == 1:
-            return result[0].get('href')
-        else:
-            return None
+        assert len(result) == 1
+        return result[0].get('href')
 
     @property
-    def tweet_link(self) -> Optional[str]:
+    def tweet_link(self) -> str:
         xpath = r'.//a[@class= "timestamp"]'
         result = self.element.xpath(xpath)
-        if len(result) == 1:
-            return result[0].get('href')
-        else:
-            return None
+        assert len(result) == 1
+        return result[0].get('href')
 
     @property
-    def timestamp(self) -> Optional[int]:
+    def timestamp(self) -> int:
         xpath = r'.//a[@class= "timestamp"]'
         result = self.element.xpath(xpath)
-        if len(result) == 1:
-            return int(result[0].get('data-timestamp'))
-        else:
-            return None
+        assert len(result) == 1
+        return int(result[0].get('data-timestamp'))
 
     @property
-    def datetime(self) -> Optional[datetime.datetime]:
-        timestamp = self.timestamp
-        if timestamp is not None:
-            return datetime.datetime.fromtimestamp(timestamp)
-        else:
-            return None
-
-    def to_element(self) -> lxml.etree._Element:
-        """Create etree element for TweetData class"""
-        return _to_element(self)
+    def datetime(self) -> _datetime.datetime:
+        return _datetime.datetime.fromtimestamp(self.timestamp)
 
     def parse(self) -> TweetData:
         """Create TweetData class"""
-        return TweetData(self.to_element())
-
-
-def _to_element(
-            data: Union[TweetDataParser, TweetData]) -> lxml.etree._Element:
-    root = lxml.etree.Element('tweet_data')
-    # user
-    user_attribute = OrderedDict([
-                ('id', data.user_id),
-                ('name', data.user_name),
-                ('link', data.user_link),
-                ])
-    user = lxml.etree.SubElement(root, 'user', attrib=user_attribute)
-    # link
-    link = lxml.etree.SubElement(root, 'link')
-    link.text = data.tweet_link
-    # tweet
-    tweet = lxml.etree.SubElement(root, 'tweet')
-    tweet.text = data.tweet
-    # datetime
-    date = lxml.etree.SubElement(root, 'datetime')
-    date.text = str(data.datetime)
-    date.set('timestamp', str(data.timestamp))
-    return root
+        kwargs: Dict[str, Any] = {}
+        kwargs['tweet'] = self.tweet
+        kwargs['tweet_link'] = self.tweet_link
+        kwargs['user_id'] = self.user_id
+        kwargs['user_name'] = self.user_name
+        kwargs['user_link'] = self.user_link
+        kwargs['timestamp'] = self.timestamp
+        return TweetData(**kwargs)
