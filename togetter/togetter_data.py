@@ -3,79 +3,88 @@
 import copy
 import datetime
 import pathlib
-from typing import List, Optional, Union
+from typing import List, Union
 import lxml.etree
 from .tweet_data import TweetData
 from .xml_tools import save_as_xml as _save_as_xml
 
 
 class TogetterData(object):
-    def __init__(self, element_tree: lxml.etree._ElementTree) -> None:
-        """Initialize
-
-        Args:
-        element_tree (lxml.etree._Element):
-            the etree element representing TogetterData"""
-        self._etree = element_tree
-        self._tweet_list = [
-                    TweetData.from_element(data) for data
-                    in self._etree.xpath(r'/togetter/tweet_list/tweet_data')]
-
-    @property
-    def etree(self) -> lxml.etree._ElementTree:
-        return self._etree
+    def __init__(self,
+                 title: str,
+                 page_id: int,
+                 url: str,
+                 access_timestamp: float,
+                 tweet_list: List[TweetData]) -> None:
+        """Initialize"""
+        self._title = title
+        self._page_id = page_id
+        self._url = url
+        self._access_timestamp = access_timestamp
+        self._tweet_list = tweet_list
 
     @property
-    def title(self) -> Optional[str]:
-        xpath = r'/togetter/title'
-        data = self.etree.xpath(xpath)
-        if len(data) == 1:
-            return data[0].text
-        else:
-            return None
+    def title(self) -> str:
+        return self._title
 
     @property
-    def page_id(self) -> Optional[int]:
-        xpath = r'/togetter/id'
-        data = self.etree.xpath(xpath)
-        if len(data) == 1:
-            return data[0].text
-        else:
-            return None
+    def page_id(self) -> int:
+        return self._page_id
 
     @property
-    def url(self) -> Optional[str]:
-        xpath = r'/togetter/URL'
-        data = self.etree.xpath(xpath)
-        if len(data) == 1:
-            return data[0].text
-        else:
-            return None
+    def url(self) -> str:
+        return self._url
 
     @property
-    def access_timestamp(self) -> Optional[float]:
-        xpath = r'/togetter/access_time'
-        data = self.etree.xpath(xpath)
-        if len(data) == 1:
-            return float(data[0].get('timestamp'))
-        else:
-            return None
+    def access_timestamp(self) -> float:
+        return self._access_timestamp
 
     @property
-    def access_time(self) -> Optional[datetime.datetime]:
-        timestamp = self.access_timestamp
-        if timestamp is not None:
-            return datetime.datetime.fromtimestamp(timestamp)
-        else:
-            return None
+    def access_time(self) -> datetime.datetime:
+        return datetime.datetime.fromtimestamp(self.access_timestamp)
 
     @property
     def tweet_list(self) -> List[TweetData]:
         return self._tweet_list
 
-    def copied(self) -> 'TogetterData':
-        """Returns deep copied self"""
-        return TogetterData(copy.deepcopy(self.etree))
+    def to_etree(self) -> lxml.etree._ElementTree:
+        # root
+        root = lxml.etree.Element('togetter')
+        etree = lxml.etree.ElementTree(root)
+        # title
+        title = lxml.etree.SubElement(root, 'title')
+        title.text = self.title
+        # id
+        page_id = lxml.etree.SubElement(root, 'id')
+        page_id.text = str(self.page_id)
+        # URL
+        url = lxml.etree.SubElement(root, 'URL')
+        url.text = self.url
+        # AccessTime
+        access_time = lxml.etree.SubElement(root, 'access_time')
+        access_time.text = str(self.access_time)
+        access_time.set('timestamp', str(self.access_timestamp))
+        # tweet data
+        tweet_list = lxml.etree.SubElement(root, 'tweet_list')
+        for i, tweet in enumerate(self.tweet_list):
+            tweet_data = tweet.to_element()
+            tweet_data.set('index', str(i))
+            tweet_list.append(tweet_data)
+        return root
+
+    @staticmethod
+    def from_etree(etree: lxml.etree._ElementTree) -> 'TogetterData':
+        assert etree.tag == 'togetter'
+        kwargs = {}
+        kwargs['title'] = etree.find('title').text
+        kwargs['page_id'] = etree.find('id').text
+        kwargs['url'] = etree.find('URL').text
+        kwargs['access_timestamp'] = float(
+                    etree.find('access_time').get('timestamp'))
+        kwargs['tweet_list'] = [TweetData.from_element(element)
+                                for element
+                                in etree.xpath('tweet_list/tweet_data')]
+        return TogetterData(**kwargs)
 
     def save_as_xml(self,
                     filepath: Union[str, pathlib.Path],
@@ -88,7 +97,7 @@ class TogetterData(object):
             Whether or not to output in pretty print
             Defaults to True.
         """
-        _save_as_xml(self.etree, filepath, pretty_print)
+        _save_as_xml(self.to_etree(), filepath, pretty_print)
 
     @classmethod
     def load_xml(cls, filepath: Union[str, pathlib.Path]) -> "TogetterData":
@@ -106,4 +115,4 @@ class TogetterData(object):
         etree = lxml.etree.XML(
                     filepath.open(encoding='utf-8').detach().read(),
                     parser=xml_parser)
-        return TogetterData(etree)
+        return TogetterData.from_etree(etree)
