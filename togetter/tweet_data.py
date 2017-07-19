@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
 
-import datetime
+import datetime as _datetime
 from collections import OrderedDict
+from typing import Any, Dict
 import lxml.etree
 
 
@@ -14,11 +15,7 @@ class TweetData(object):
                  user_name: str,
                  user_link: str,
                  timestamp: int) -> None:
-        """Initialize
-
-        Args:
-        element (lxml.etree._Element):
-            Element representing the tweet"""
+        """Initialize"""
         self._tweet = tweet
         self._tweet_link = tweet_link
         self._user_id = user_id
@@ -51,10 +48,10 @@ class TweetData(object):
         return self._timestamp
 
     @property
-    def datetime(self) -> datetime.datetime:
-        return datetime.datetime.fromtimestamp(self._timestamp)
+    def datetime(self) -> _datetime.datetime:
+        return _datetime.datetime.fromtimestamp(self._timestamp)
 
-    def to_element(self) -> lxml.etree._Element:
+    def to_element(self) -> lxml.etree._ElementTree:
         """Create etree element"""
         root = lxml.etree.Element('tweet_data')
         # user
@@ -145,12 +142,12 @@ class TweetDataParser(object):
         return int(result[0].get('data-timestamp'))
 
     @property
-    def datetime(self) -> datetime.datetime:
-        return datetime.datetime.fromtimestamp(self.timestamp)
+    def datetime(self) -> _datetime.datetime:
+        return _datetime.datetime.fromtimestamp(self.timestamp)
 
     def parse(self) -> TweetData:
         """Create TweetData class"""
-        kwargs = {}
+        kwargs: Dict[str, Any] = {}
         kwargs['tweet'] = self.tweet
         kwargs['tweet_link'] = self.tweet_link
         kwargs['user_id'] = self.user_id
