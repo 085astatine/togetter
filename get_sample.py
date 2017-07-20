@@ -31,7 +31,7 @@ if __name__ == '__main__':
     xml_file = 'togetter_{0}.xml'.format(togetter_id)
     parser.parse().save_as_xml(xml_file)
     # load from XML
-    togetter_data = togetter.TogetterData.load_xml(xml_file)
+    togetter_data = togetter.Togetter.load_xml(xml_file)
     print(togetter_data.title)
     print(togetter_data.url)
     for tweet in togetter_data.tweet_list:

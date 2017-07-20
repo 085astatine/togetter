@@ -7,7 +7,7 @@ from typing import Any, Dict
 import lxml.etree
 
 
-class TweetData(object):
+class Tweet(object):
     def __init__(self,
                  tweet: str,
                  tweet_link: str,
@@ -74,7 +74,7 @@ class TweetData(object):
         return root
 
     @staticmethod
-    def from_element(etree: lxml.etree._Element) -> 'TweetData':
+    def from_element(etree: lxml.etree._Element) -> 'Tweet':
         assert etree.tag == 'tweet_data'
         kwargs = {}
         kwargs['tweet'] = etree.find('tweet').text
@@ -83,10 +83,10 @@ class TweetData(object):
         kwargs['user_name'] = etree.find('user').get('name')
         kwargs['user_link'] = etree.find('user').get('link')
         kwargs['timestamp'] = int(etree.find('datetime').get('timestamp'))
-        return TweetData(**kwargs)
+        return Tweet(**kwargs)
 
 
-class TweetDataParser(object):
+class TweetParser(object):
     """Initialize
 
     Args:
@@ -145,8 +145,8 @@ class TweetDataParser(object):
     def datetime(self) -> _datetime.datetime:
         return _datetime.datetime.fromtimestamp(self.timestamp)
 
-    def parse(self) -> TweetData:
-        """Create TweetData class"""
+    def parse(self) -> Tweet:
+        """Create Tweet class"""
         kwargs: Dict[str, Any] = {}
         kwargs['tweet'] = self.tweet
         kwargs['tweet_link'] = self.tweet_link
@@ -154,4 +154,4 @@ class TweetDataParser(object):
         kwargs['user_name'] = self.user_name
         kwargs['user_link'] = self.user_link
         kwargs['timestamp'] = self.timestamp
-        return TweetData(**kwargs)
+        return Tweet(**kwargs)
