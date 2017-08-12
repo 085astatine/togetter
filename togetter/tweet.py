@@ -75,7 +75,8 @@ class Tweet(object):
 
     @staticmethod
     def from_element(etree: lxml.etree._Element) -> 'Tweet':
-        assert etree.tag == 'tweet_data'
+        assert etree.tag == 'tweet_data', \
+               'unexpected tag: {0}'.format(etree.tag)
         kwargs = {}
         kwargs['tweet'] = etree.find('tweet').text
         kwargs['tweet_link'] = etree.find('link').text

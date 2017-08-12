@@ -83,7 +83,8 @@ class Togetter(object):
                     etree.find('access_time').get('timestamp'))
         kwargs['tweet_list'] = [Tweet.from_element(element)
                                 for element
-                                in etree.find('tweet_list').iterchildren()]
+                                in etree.find('tweet_list').iterchildren()
+                                if element.tag is not lxml.etree.Comment]
         return Togetter(**kwargs)
 
     def save_as_xml(self,
