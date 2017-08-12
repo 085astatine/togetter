@@ -49,7 +49,7 @@ class Togetter(object):
 
     def to_etree(self) -> lxml.etree._ElementTree:
         # root
-        root = lxml.etree.Element('togetter')
+        root = lxml.etree.Element(__class__.root_tag())
         etree = lxml.etree.ElementTree(root)
         # title
         title = lxml.etree.SubElement(root, 'title')
@@ -73,8 +73,13 @@ class Togetter(object):
         return root
 
     @staticmethod
+    def root_tag() -> str:
+        return 'togetter'
+
+    @staticmethod
     def from_etree(etree: lxml.etree._ElementTree) -> 'Togetter':
-        assert etree.tag == 'togetter'
+        assert etree.tag == __class__.root_tag(), \
+               'unexpected tag: {0}'.format(etree.tag)
         kwargs = {}
         kwargs['title'] = etree.find('title').text
         kwargs['page_id'] = etree.find('id').text
