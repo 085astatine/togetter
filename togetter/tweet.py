@@ -75,7 +75,7 @@ class Tweet(object):
 
     @staticmethod
     def root_tag() -> str:
-        return 'tweet_data'
+        return 'tweet'
 
     @staticmethod
     def from_element(etree: lxml.etree._Element) -> 'Tweet':

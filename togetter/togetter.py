@@ -58,7 +58,7 @@ class Togetter(object):
         page_id = lxml.etree.SubElement(root, 'id')
         page_id.text = str(self.page_id)
         # URL
-        url = lxml.etree.SubElement(root, 'URL')
+        url = lxml.etree.SubElement(root, 'url')
         url.text = self.url
         # AccessTime
         access_time = lxml.etree.SubElement(root, 'access_time')
@@ -83,7 +83,7 @@ class Togetter(object):
         kwargs = {}
         kwargs['title'] = etree.find('title').text
         kwargs['page_id'] = etree.find('id').text
-        kwargs['url'] = etree.find('URL').text
+        kwargs['url'] = etree.find('url').text
         kwargs['access_timestamp'] = float(
                     etree.find('access_time').get('timestamp'))
         kwargs['tweet_list'] = [Tweet.from_element(element)
