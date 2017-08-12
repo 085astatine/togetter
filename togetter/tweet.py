@@ -105,7 +105,17 @@ class TweetParser(object):
         xpath = r'.//div[@class= "tweet emj"]'
         result = self.element.xpath(xpath)
         assert len(result) == 1
-        return ''.join(result[0].itertext())
+        text_list = []
+        if result[0].text is not None:
+            text_list.append(result[0].text)
+        for element in result[0]:
+            if element.get('data-origin-url'):
+                text_list.append(element.get('data-origin-url'))
+            else:
+                text_list.append(element.text)
+            if element.tail is not None:
+                text_list.append(element.tail)
+        return ''.join(text_list)
 
     @property
     def user_name(self) -> str:
