@@ -49,7 +49,7 @@ class Togetter(object):
 
     def to_etree(self) -> lxml.etree._ElementTree:
         # root
-        root = lxml.etree.Element('togetter')
+        root = lxml.etree.Element(__class__.root_tag())
         etree = lxml.etree.ElementTree(root)
         # title
         title = lxml.etree.SubElement(root, 'title')
@@ -58,7 +58,7 @@ class Togetter(object):
         page_id = lxml.etree.SubElement(root, 'id')
         page_id.text = str(self.page_id)
         # URL
-        url = lxml.etree.SubElement(root, 'URL')
+        url = lxml.etree.SubElement(root, 'url')
         url.text = self.url
         # AccessTime
         access_time = lxml.etree.SubElement(root, 'access_time')
@@ -73,12 +73,17 @@ class Togetter(object):
         return root
 
     @staticmethod
+    def root_tag() -> str:
+        return 'togetter'
+
+    @staticmethod
     def from_etree(etree: lxml.etree._ElementTree) -> 'Togetter':
-        assert etree.tag == 'togetter'
+        assert etree.tag == __class__.root_tag(), \
+               'unexpected tag: {0}'.format(etree.tag)
         kwargs = {}
         kwargs['title'] = etree.find('title').text
         kwargs['page_id'] = etree.find('id').text
-        kwargs['url'] = etree.find('URL').text
+        kwargs['url'] = etree.find('url').text
         kwargs['access_timestamp'] = float(
                     etree.find('access_time').get('timestamp'))
         kwargs['tweet_list'] = [Tweet.from_element(element)

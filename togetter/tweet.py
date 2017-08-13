@@ -53,7 +53,7 @@ class Tweet(object):
 
     def to_element(self) -> lxml.etree._ElementTree:
         """Create etree element"""
-        root = lxml.etree.Element('tweet_data')
+        root = lxml.etree.Element(__class__.root_tag())
         # user
         user_attribute = OrderedDict([
                     ('id', self.user_id),
@@ -74,8 +74,12 @@ class Tweet(object):
         return root
 
     @staticmethod
+    def root_tag() -> str:
+        return 'tweet'
+
+    @staticmethod
     def from_element(etree: lxml.etree._Element) -> 'Tweet':
-        assert etree.tag == 'tweet_data', \
+        assert etree.tag == __class__.root_tag(), \
                'unexpected tag: {0}'.format(etree.tag)
         kwargs = {}
         kwargs['tweet'] = etree.find('tweet').text
